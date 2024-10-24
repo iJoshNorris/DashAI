@@ -18,7 +18,7 @@ from DashAI.back.explainability import (
     PartialDependence,
     PermutationFeatureImportance,
 )
-from DashAI.back.exploration import DescribeExplorer
+from DashAI.back.exploration import DescribeExplorer, ScatterPlotExplorer
 from DashAI.back.job import ExplainerJob, ExplorerJob, ModelJob
 from DashAI.back.metrics import F1, Accuracy, Bleu, Precision, Recall
 from DashAI.back.models import (
@@ -89,6 +89,7 @@ INITIAL_COMPONENTS = [
     FitKernelShap,
     # Explorers
     DescribeExplorer,
+    ScatterPlotExplorer,
 ]
 
 
