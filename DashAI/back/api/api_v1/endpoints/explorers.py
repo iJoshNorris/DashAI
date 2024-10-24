@@ -77,7 +77,8 @@ def validate_explorer_params(
 
     # validate columns against dataset columns
     dataset = load_dataset(f"{dataset.file_path}/dataset")
-    columns = dataset["train"].column_names
+    split = list(dataset.keys())[0]
+    columns = dataset[split].column_names
 
     for col in explorer.columns:
         if col["columnName"] not in columns:
