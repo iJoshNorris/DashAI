@@ -22,7 +22,7 @@ export const explorationModes = {
     backButton: true,
     creatorButton: false,
     reloaderButton: false,
-    showModalTitle: true,
+    showModalTitle: false,
   },
   EXPLORATION_VISUALIZE: {
     name: "visualize",
@@ -31,8 +31,8 @@ export const explorationModes = {
     body: "",
     backButton: true,
     creatorButton: false,
-    reloaderButton: false,
-    showModalTitle: true,
+    reloaderButton: true,
+    showModalTitle: false,
   },
   EXPLORATION_LIST: {
     name: "history",
@@ -51,8 +51,8 @@ export const explorationModes = {
     body: "",
     backButton: true,
     creatorButton: false,
-    reloaderButton: false,
-    showModalTitle: true,
+    reloaderButton: true,
+    showModalTitle: false,
   },
 };
 
