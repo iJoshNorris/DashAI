@@ -4,7 +4,12 @@ from beartype.typing import Any, Dict, Final
 
 from DashAI.back.config_object import ConfigObject
 from DashAI.back.core.schema_fields import BaseSchema
-from DashAI.back.dataloaders.classes.dashai_dataset import DashAIDataset
+from DashAI.back.dataloaders.classes.dashai_dataset import (
+    DashAIDataset,
+    DatasetDict,
+    concatenate_datasets,
+    select_columns,
+)
 from DashAI.back.dependencies.database.models import Exploration, Explorer
 
 
@@ -36,6 +41,9 @@ class BaseExplorer(ConfigObject, ABC):
     SCHEMA: BaseExplorerSchema
 
     metadata: Dict[str, Any] = {}
+
+    def __init__(self, **kwargs) -> None:
+        self.kwargs = kwargs
 
     @classmethod
     def get_metadata(cls) -> Dict[str, Any]:
@@ -75,8 +83,38 @@ class BaseExplorer(ConfigObject, ABC):
         """
         return cls.SCHEMA.model_validate(params)
 
+    def prepare_dataset(
+        self, dataset_dict: DatasetDict, columns: list[str]
+    ) -> DashAIDataset:
+        """
+        Prepare the dataset for the exploration.
+
+        Parameters
+        ----------
+        dataset : DatasetDict
+            The dataset to prepare.
+
+        columns : list[str]
+            The columns to select from the dataset.
+
+        Returns
+        -------
+        DashAIDataset
+            The prepared dataset.
+        """
+        # Select the columns
+        dataset_dict = select_columns(dataset_dict, columns, [])[0]
+        dataset_dict = concatenate_datasets(
+            [dataset_dict[split] for split in dataset_dict]
+        )
+        # Cast the dataset to DashAIDataset
+        dataset_dict: DashAIDataset = dataset_dict
+        return dataset_dict
+
     @abstractmethod
-    def launch_exploration(self, dataset: DashAIDataset) -> Any:
+    def launch_exploration(
+        self, dataset: DashAIDataset, explorer_info: Explorer
+    ) -> Any:
         raise NotImplementedError
 
     @abstractmethod

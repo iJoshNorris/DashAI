@@ -2,16 +2,12 @@ import logging
 import os
 import pathlib
 
-from beartype.typing import Any, Dict, List, Type
+from beartype.typing import Any, Dict, Type
 from kink import inject
 from sqlalchemy import exc
 from sqlalchemy.orm import Session
 
-from DashAI.back.dataloaders.classes.dashai_dataset import (
-    DashAIDataset,
-    load_dataset,
-    select_columns,
-)
+from DashAI.back.dataloaders.classes.dashai_dataset import load_dataset
 from DashAI.back.dependencies.database.models import Dataset, Exploration, Explorer
 from DashAI.back.dependencies.registry import ComponentRegistry
 from DashAI.back.exploration.base_explorer import BaseExplorer
@@ -91,30 +87,15 @@ class ExplorerJob(BaseJob):
             db.commit()
             raise JobError("Error while loading the dataset info.") from e
 
-        # Load the dataset and select the columns
+        # Load the dataset
         try:
-            dataset_dict: DashAIDataset = load_dataset(
-                f"{dataset_info.file_path}/dataset"
-            )
+            dataset_dict = load_dataset(f"{dataset_info.file_path}/dataset")
         except Exception as e:
             log.exception(e)
             explorer_info.set_status_as_error()
             db.commit()
             raise JobError(
                 f"Can not load dataset from path {dataset_info.file_path}",
-            ) from e
-
-        # Select the columns
-        try:
-            cols: List[Dict[str, Any]] = explorer_info.columns
-            columns = [cols["columnName"] for cols in cols]
-            dataset_dict = select_columns(dataset_dict, columns, [])[0]
-        except Exception as e:
-            log.exception(e)
-            explorer_info.set_status_as_error()
-            db.commit()
-            raise JobError(
-                f"Error while selecting the columns {columns} from the dataset."
             ) from e
 
         # obtain the explorer component from the registry
@@ -141,9 +122,29 @@ class ExplorerJob(BaseJob):
                 f"Error instancing the explorer {explorer_info.exploration_type}."
             ) from e
 
+        # prepare the dataset
+        try:
+            cols: list[Dict[str, Any]] = explorer_info.columns
+            explorer_columns = [cols["columnName"] for cols in cols]
+            prepared_dataset = explorer_instance.prepare_dataset(
+                dataset_dict, explorer_columns
+            )
+        except Exception as e:
+            log.exception(e)
+            explorer_info.set_status_as_error()
+            db.commit()
+            raise JobError(
+                (
+                    "Error preparing the dataset for the exploration "
+                    f"{explorer_info.exploration_type}."
+                )
+            ) from e
+
         # Launch the exploration
         try:
-            result = explorer_instance.launch_exploration(dataset_dict["train"])
+            result = explorer_instance.launch_exploration(
+                prepared_dataset, explorer_info
+            )
         except Exception as e:
             log.exception(e)
             explorer_info.set_status_as_error()
