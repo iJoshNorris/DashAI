@@ -11,7 +11,9 @@ from DashAI.back.core.schema_fields import (
     schema_field,
     string_field,
 )
-from DashAI.back.dataloaders.classes.dashai_dataset import DashAIDataset
+from DashAI.back.dataloaders.classes.dashai_dataset import (  # ClassLabel, Value,
+    DashAIDataset,
+)
 from DashAI.back.dependencies.database.models import Exploration, Explorer
 from DashAI.back.exploration.base_explorer import BaseExplorer, BaseExplorerSchema
 
@@ -28,18 +30,18 @@ class DescribeExplorerSchema(BaseExplorerSchema):
         (
             "The percentiles to include in the exploration. "
             "Must be a list of integers between 0 and 100.\n"
-            "Defaults to: '25, 50, 75'"
+            "Example: '25, 50, 75'"
         ),
     )  # type: ignore
     include: schema_field(
-        enum_field(["all", "number", "object", "category", "datetime"]),
-        "number",
-        ("The data types to include in the exploration.\n" "Defaults to: 'number'"),
+        none_type(enum_field(["all", "number", "object", "category", "datetime"])),
+        None,
+        ("The data types to include in the exploration.\n"),
     )  # type: ignore
     exclude: schema_field(
         none_type(enum_field(["object", "number", "category", "datetime"])),
         None,
-        ("The data types to exclude in the exploration." "Defaults to: None"),
+        ("The data types to exclude in the exploration."),
     )  # type: ignore
 
 
@@ -53,22 +55,27 @@ class DescribeExplorer(BaseExplorer):
     }
 
     def __init__(self, **kwargs) -> None:
-        parameters = kwargs
-
         # transform percentiles to list of floats for describe (e.g., [0.25, 0.5, 0.75])
-        if parameters.get("percentiles"):
-            percentiles = parameters["percentiles"].split(",")
+        if kwargs.get("percentiles"):
+            percentiles = kwargs["percentiles"].strip().split(",")
             percentiles = [percentile.strip() for percentile in percentiles]
 
             if percentiles == [""]:
-                percentiles = ["25", "50", "75"]
-            percentiles = [float(percentile) / 100 for percentile in percentiles]
-            parameters["percentiles"] = percentiles
+                percentiles = None
+            else:
+                percentiles = [float(percentile) / 100 for percentile in percentiles]
+            kwargs["percentiles"] = percentiles
 
-        self.kwargs = kwargs
-        self.percentiles = parameters["percentiles"]
-        self.include = parameters["include"]
-        self.exclude = parameters["exclude"]
+        if kwargs.get("include") and kwargs["include"] != "all":
+            kwargs["include"] = [kwargs["include"]]
+
+        if kwargs.get("exclude"):
+            kwargs["exclude"] = [kwargs["exclude"]]
+
+        self.percentiles = kwargs["percentiles"]
+        self.include = kwargs["include"]
+        self.exclude = kwargs["exclude"]
+        super().__init__(**kwargs)
 
     @classmethod
     def validate_parameters(cls, params: Dict[str, Any]) -> bool:
@@ -77,7 +84,7 @@ class DescribeExplorer(BaseExplorer):
 
         # Validate percentiles (must be int between 0 and 100)
         if params.get("percentiles"):
-            percentiles = params["percentiles"].split(",")
+            percentiles = params["percentiles"].strip().split(",")
             for percentile in percentiles:
                 try:
                     int_percentile = int(percentile)
@@ -87,20 +94,14 @@ class DescribeExplorer(BaseExplorer):
                     return False
         return True
 
-    def launch_exploration(self, dataset: DashAIDataset) -> pd.DataFrame:
+    def launch_exploration(
+        self, dataset: DashAIDataset, __explorer_info__: Explorer
+    ) -> pd.DataFrame:
         _df = dataset.to_pandas()
 
         percentiles = self.percentiles
         include = self.include
         exclude = self.exclude
-
-        if include == "number":
-            include = None
-        elif include == "all":
-            pass
-        else:
-            include = list(include)
-        exclude = None if exclude is None else list(exclude)
 
         result = _df.describe(percentiles=percentiles, include=include, exclude=exclude)
         return result
