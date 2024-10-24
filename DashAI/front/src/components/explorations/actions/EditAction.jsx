@@ -1,9 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import { Tooltip } from "@mui/material";
-import { Edit as EditIcon } from "@mui/icons-material";
-import { GridActionsCellItem } from "@mui/x-data-grid";
+import { Edit as ActionIcon } from "@mui/icons-material";
+import TooltipedCellItem from "../../shared/TooltipedCellItem";
 
 const tooltips = {
   enabled: "Edit Exploration",
@@ -29,18 +28,16 @@ function EditAction({ onAction = () => {}, disabled = false, ...props }) {
 
   return (
     <React.Fragment>
-      <Tooltip title={tooltip} onClick={() => handleAction()}>
-        {/* This span allow tooltip when the element is disabled */}
-        <span>
-          <GridActionsCellItem
-            icon={<EditIcon />}
-            label="Edit Exploration"
-            sx={{ color: color }}
-            disabled={disabled}
-            {...props}
-          />
-        </span>
-      </Tooltip>
+      <TooltipedCellItem
+        sx={{ color: color }}
+        key="edit-exploration"
+        icon={<ActionIcon />}
+        tooltip={tooltip}
+        label="Edit Exploration"
+        disabled={disabled}
+        {...props}
+        onClick={handleAction}
+      />
     </React.Fragment>
   );
 }
