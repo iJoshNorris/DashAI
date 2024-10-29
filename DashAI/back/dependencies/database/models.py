@@ -232,7 +232,7 @@ class Explorer(Base):
         onupdate=datetime.now,
     )
     # explorer
-    columns: Mapped[str] = mapped_column(JSON, nullable=False)
+    columns: Mapped[JSON] = mapped_column(JSON, nullable=False)
     exploration_type: Mapped[str] = mapped_column(String, nullable=False)
     parameters: Mapped[JSON] = mapped_column(JSON, nullable=False)
     exploration_path: Mapped[str] = mapped_column(String, nullable=True)

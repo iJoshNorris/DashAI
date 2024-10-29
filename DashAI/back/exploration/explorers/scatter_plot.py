@@ -3,7 +3,7 @@ import pathlib
 import pickle
 
 import plotly.express as px
-from beartype.typing import Any, Dict
+from beartype.typing import Any, Dict, List
 from plotly.graph_objs import Figure
 
 from DashAI.back.core.schema_fields import none_type, schema_field, string_field
@@ -54,7 +54,7 @@ class ScatterPlotExplorer(BaseExplorer):
         super().__init__(**kwargs)
 
     def prepare_dataset(
-        self, dataset_dict: DatasetDict, columns: list[str]
+        self, dataset_dict: DatasetDict, columns: List[str]
     ) -> DashAIDataset:
         split = list(dataset_dict.keys())[0]
         dataset_columns = dataset_dict[split].column_names

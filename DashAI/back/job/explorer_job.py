@@ -2,7 +2,7 @@ import logging
 import os
 import pathlib
 
-from beartype.typing import Any, Dict, Type
+from beartype.typing import Any, Dict, List, Type
 from kink import inject
 from sqlalchemy import exc
 from sqlalchemy.orm import Session
@@ -124,7 +124,7 @@ class ExplorerJob(BaseJob):
 
         # prepare the dataset
         try:
-            cols: list[Dict[str, Any]] = explorer_info.columns
+            cols: List[Dict[str, Any]] = explorer_info.columns
             explorer_columns = [cols["columnName"] for cols in cols]
             prepared_dataset = explorer_instance.prepare_dataset(
                 dataset_dict, explorer_columns

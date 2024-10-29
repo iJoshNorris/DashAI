@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from beartype.typing import Any, Dict, Final
+from beartype.typing import Any, Dict, Final, List
 
 from DashAI.back.config_object import ConfigObject
 from DashAI.back.core.schema_fields import BaseSchema
@@ -84,7 +84,7 @@ class BaseExplorer(ConfigObject, ABC):
         return cls.SCHEMA.model_validate(params)
 
     def prepare_dataset(
-        self, dataset_dict: DatasetDict, columns: list[str]
+        self, dataset_dict: DatasetDict, columns: List[str]
     ) -> DashAIDataset:
         """
         Prepare the dataset for the exploration.
