@@ -130,16 +130,16 @@ function ConfigureExplorersStep({ onValidation = () => {} }) {
 
           reason += `This explorer requires at least \
             ${inputCardinality.min} valid ${
-            inputCardinality.min === 1 ? "column" : "columns"
-          }.`;
+              inputCardinality.min === 1 ? "column" : "columns"
+            }.`;
         }
 
         if (inputCardinality.max != undefined && inputCardinality.max != null) {
           if (reason) reason += "\n";
           reason += `This explorer requires at most \
             ${inputCardinality.max} valid ${
-            inputCardinality.max === 1 ? "column" : "columns"
-          }.`;
+              inputCardinality.max === 1 ? "column" : "columns"
+            }.`;
         }
       }
 
