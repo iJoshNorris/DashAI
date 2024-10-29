@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import PropTypes from "prop-types";
 
-import { Box } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import { Box, Paper } from "@mui/material";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { useSnackbar } from "notistack";
 
 import { formatDate } from "../../utils";
@@ -20,11 +20,31 @@ import {
   deleteExploration,
 } from "../../api/exploration";
 
+/**
+ * Component that renders a table with the explorations of a dataset.
+ * It uses the module context to get the dataset id and fetch the explorations.
+ * It also provides actions to edit, run, view results and delete an exploration.
+ * @param {Object} props
+ * @param {boolean} props.updateTableFlag - Flag to trigger an update of the table
+ * @param {Function} props.setUpdateTableFlag - Function to set the updateTableFlag
+ * @param {Function} props.onExplorationSelect - Function to handle the selection of an exploration
+ * @param {Function} props.onExplorationRun - Function to handle the run of an exploration
+ * @param {Function} props.onViewExplorationResults - Function to handle the view of the results of an exploration
+ */
 function ExplorationsTable({
   updateTableFlag = false,
-  setUpdateTableFlag = (value) => {},
-  onExplorationSelect = (data) => {},
-  onExplorationRun = (data) => {},
+  setUpdateTableFlag = (value) => {
+    console.log("setUpdateTableFlag", value);
+  },
+  onExplorationSelect = (data) => {
+    console.log("onExplorationSelect", data);
+  },
+  onExplorationRun = (data) => {
+    console.log("onExplorationRun", data);
+  },
+  onViewExplorationResults = (data) => {
+    console.log("onViewExplorationResults", data);
+  },
 }) {
   const { explorationData } = useExplorationsContext();
   const { dataset_id: datasetId } = explorationData;
@@ -56,6 +76,10 @@ function ExplorationsTable({
 
   const handleRunExploration = (data) => {
     onExplorationRun(data);
+  };
+
+  const handleViewExplorationResults = (data) => {
+    onViewExplorationResults(data);
   };
 
   const handleDeleteExploration = (id) => {
@@ -134,7 +158,7 @@ function ExplorationsTable({
           />,
           <ViewExplorationResultsAction
             key="view-results-button"
-            onAction={() => {}}
+            onAction={() => handleViewExplorationResults(params.row)}
           />,
           <DeleteItemModal
             key="delete-button"
@@ -148,24 +172,40 @@ function ExplorationsTable({
 
   return (
     <Box sx={{ height: "100%", width: "100%" }}>
-      <DataGrid
-        loading={loading}
-        autoHeight
-        rows={explorations}
-        columns={columns}
-        disableRowSelectionOnClick
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 5,
-            },
-          },
-          sorting: {
-            sortModel: [{ field: "updated", sort: "desc" }],
-          },
+      <Paper
+        sx={{ px: 3, py: 2 }}
+        // solves a mui problem related to putting datagrid inside another datagrid
+        onClick={(event) => {
+          event.target = document.body;
         }}
-        pageSizeOptions={[5, 10]}
-      />
+      >
+        <DataGrid
+          loading={loading}
+          autoHeight
+          rows={explorations}
+          columns={columns}
+          disableRowSelectionOnClick
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 5,
+              },
+            },
+            sorting: {
+              sortModel: [{ field: "created", sort: "desc" }],
+            },
+          }}
+          pageSizeOptions={[5, 10]}
+          slots={{
+            toolbar: GridToolbar,
+          }}
+          slotProps={{
+            toolbar: {
+              showQuickFilter: true,
+            },
+          }}
+        />
+      </Paper>
     </Box>
   );
 }
@@ -174,6 +214,8 @@ ExplorationsTable.propTypes = {
   updateTableFlag: PropTypes.bool,
   setUpdateTableFlag: PropTypes.func,
   onExplorationSelect: PropTypes.func,
+  onExplorationRun: PropTypes.func,
+  onViewExplorationResults: PropTypes.func,
 };
 
 export default ExplorationsTable;

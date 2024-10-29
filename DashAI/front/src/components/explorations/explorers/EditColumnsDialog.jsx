@@ -11,7 +11,7 @@ import {
   Chip,
   Stack,
 } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { ArrowBackOutlined, ViewColumn } from "@mui/icons-material";
 
 import TooltipedCellItem from "../../shared/TooltipedCellItem";
@@ -36,6 +36,14 @@ const columns = [
   },
 ];
 
+/**
+ * Dialog to edit columns selection
+ * @param {Object} props
+ * @param {Array} props.datasetColumns List of columns
+ * @param {Function} props.updateValue Callback to update the selected columns
+ * @param {Array} props.initialValues Initial selected columns
+ * @param {Object} props.explorerType Explorer type object with metadata
+ */
 function EditColumnsDialog({
   datasetColumns,
   updateValue,
@@ -106,7 +114,9 @@ function EditColumnsDialog({
 
     // check if the row selection model is at the maximum cardinality
     const selectedCount = rowSelectionModel.length;
-    const maxReached = selectedCount >= inputCardinality.max;
+    const maxReached =
+      selectedCount >= inputCardinality.max ||
+      selectedCount >= inputCardinality.exact;
     if (maxReached) {
       return false;
     }
@@ -250,7 +260,6 @@ function EditColumnsDialog({
                     },
                   },
                 }}
-                pageSize={5}
                 pageSizeOptions={[5, 10, 20]}
                 checkboxSelection
                 onRowSelectionModelChange={handleSelection}
@@ -269,6 +278,14 @@ function EditColumnsDialog({
                     color: "#777",
                   },
                 }}
+                slots={{
+                  toolbar: GridToolbar,
+                }}
+                slotProps={{
+                  toolbar: {
+                    showQuickFilter: true,
+                  },
+                }}
               />
             </Box>
           </DialogContent>
@@ -278,6 +295,11 @@ function EditColumnsDialog({
   );
 }
 
-EditColumnsDialog.propTypes = {};
+EditColumnsDialog.propTypes = {
+  datasetColumns: PropTypes.array.isRequired,
+  updateValue: PropTypes.func.isRequired,
+  initialValues: PropTypes.array.isRequired,
+  explorerType: PropTypes.object.isRequired,
+};
 
 export default EditColumnsDialog;

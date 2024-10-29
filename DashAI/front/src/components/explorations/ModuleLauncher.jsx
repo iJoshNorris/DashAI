@@ -6,6 +6,12 @@ import { Button } from "@mui/material";
 import { ExplorationsProvider } from "./context";
 import { ExplorationsModal } from "./";
 
+/**
+ * Component that launches the explorations modal. It creates the context and modal on open.
+ * @param {object} props
+ * @param {function} props.onClose - Function to call when the modal is closed.
+ * @param {number} props.datasetId - The id of the dataset to explore.
+ */
 function ModuleLauncher({ onClose = () => {}, datasetId }) {
   const [open, setOpen] = useState(false);
 

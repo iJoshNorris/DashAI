@@ -2,14 +2,20 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 
 import SettingsIcon from "@mui/icons-material/Settings";
-import { GridActionsCellItem } from "@mui/x-data-grid";
 
 import FormSchemaDialog from "../../shared/FormSchemaDialog";
 import FormSchemaWithSelectedModel from "../../shared/FormSchemaWithSelectedModel";
 import TooltipedCellItem from "../../shared/TooltipedCellItem";
 
+/**
+ * Dialog to edit the parameters of a explorer.
+ * @param {Object} props
+ * @param {String} props.componentToConfigure - explorationType to configure
+ * @param {Function} props.updateParameters - Function to update the parameters
+ * @param {Object} props.paramsInitialValues - Initial values of the parameters
+ */
 function EditParametersDialog({
-  modelToConfigure,
+  componentToConfigure,
   updateParameters,
   paramsInitialValues,
 }) {
@@ -27,7 +33,7 @@ function EditParametersDialog({
 
       {open && (
         <FormSchemaDialog
-          modelToConfigure={modelToConfigure}
+          modelToConfigure={componentToConfigure}
           open={open}
           setOpen={setOpen}
           onFormSubmit={(values) => {
@@ -40,7 +46,7 @@ function EditParametersDialog({
               updateParameters(values);
               setOpen(false);
             }}
-            modelToConfigure={modelToConfigure}
+            modelToConfigure={componentToConfigure}
             initialValues={paramsInitialValues}
             onCancel={() => setOpen(false)}
           />
@@ -51,7 +57,7 @@ function EditParametersDialog({
 }
 
 EditParametersDialog.propTypes = {
-  modelToConfigure: PropTypes.string.isRequired,
+  componentToConfigure: PropTypes.string.isRequired,
   updateParameters: PropTypes.func.isRequired,
   paramsInitialValues: PropTypes.objectOf(
     PropTypes.oneOfType([

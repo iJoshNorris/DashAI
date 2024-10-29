@@ -5,6 +5,7 @@ import { Button, Stack, Box, Typography } from "@mui/material";
 import {
   AddCircleOutline as AddIcon,
   Update as UpdateIcon,
+  ChevronLeft as BackIcon,
 } from "@mui/icons-material";
 
 import { useSnackbar } from "notistack";
@@ -13,15 +14,27 @@ import {
   explorationModes,
   contextDefaults,
 } from "./context";
-import { ExplorationsTable, ExplorationEditor } from "./";
+import {
+  ExplorationsTable,
+  ExplorationEditor,
+  ExplorationRunner,
+  ExplorationResultsViewer,
+} from "./";
 import { getExplorersByExplorationId } from "../../api/explorer";
 
+/**
+ * Main component of the Explorations module.
+ * Requires the use of the ExplorationsContext.
+ * It is responsible for rendering the different views of the module.
+ * It handles launching the creation, editing, running and visualization of explorations.
+ */
 function Explorations() {
   const {
     explorationMode,
     setExplorationMode,
     explorationData,
     setExplorationData,
+    setExplorerData,
   } = useExplorationsContext();
   const { dataset_id } = explorationData;
   const { enqueueSnackbar } = useSnackbar();
@@ -33,10 +46,14 @@ function Explorations() {
     setExplorationMode(explorationModes.EXPLORATION_CREATE);
   };
 
-  const handleCloseDialogs = () => {
+  const handleBack = () => {
     setExplorationData((prev) => ({
       ...contextDefaults.defaultExplorationData,
       dataset_id: prev.dataset_id,
+    }));
+    setExplorerData((prev) => ({
+      ...contextDefaults.defaultExplorerData,
+      exploration_id: prev.exploration_id,
     }));
     setExplorationMode(contextDefaults.defaultExplorationMode);
     handleReload();
@@ -73,9 +90,23 @@ function Explorations() {
     });
   };
 
+  const handleViewExplorationResults = (data) => {
+    fetchExplorers(data.id).then((explorers) => {
+      setExplorationData((prev) => ({ ...prev, ...data, explorers }));
+      setExplorationMode(explorationModes.EXPLORATION_VISUALIZE);
+    });
+  };
+
   return (
     <React.Fragment>
       <Stack direction="row" alignItems="center" spacing={2} pl={2} pr={2}>
+        {/* Show back button */}
+        {explorationMode.backButton && (
+          <Button variant="text" onClick={handleBack} startIcon={<BackIcon />}>
+            Back
+          </Button>
+        )}
+
         {/* Show titles if they exist */}
         {explorationMode.title && (
           <Box sx={{ flexGrow: 1, textAlign: "start" }}>
@@ -120,7 +151,6 @@ function Explorations() {
           overflowX: "auto",
           mt: 2,
           mb: 2,
-          height: "calc(100vh - 300px)",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
@@ -128,25 +158,36 @@ function Explorations() {
           gap: 1,
         }}
       >
-        <ExplorationsTable
-          updateTableFlag={updateFlag}
-          setUpdateTableFlag={setUpdateFlag}
-          datasetId={dataset_id}
-          onExplorationSelect={handleSelectExploration}
-          onExplorationRun={handleRunExploration}
-        />
-
-        {explorationMode === explorationModes.EXPLORATION_CREATE && (
-          <ExplorationEditor
-            open={true}
-            handleCloseDialog={handleCloseDialogs}
+        {explorationMode === explorationModes.EXPLORATION_LIST && (
+          <ExplorationsTable
+            updateTableFlag={updateFlag}
+            setUpdateTableFlag={setUpdateFlag}
+            datasetId={dataset_id}
+            onExplorationSelect={handleSelectExploration}
+            onExplorationRun={handleRunExploration}
+            onViewExplorationResults={handleViewExplorationResults}
           />
         )}
 
+        {explorationMode === explorationModes.EXPLORATION_CREATE && (
+          <ExplorationEditor handleCloseDialog={handleBack} />
+        )}
+
         {explorationMode === explorationModes.EXPLORATION_EDIT && (
-          <ExplorationEditor
-            open={true}
-            handleCloseDialog={handleCloseDialogs}
+          <ExplorationEditor handleCloseDialog={handleBack} />
+        )}
+
+        {explorationMode === explorationModes.EXPLORATION_RUN && (
+          <ExplorationRunner
+            handleCloseDialog={handleBack}
+            updateFlag={updateFlag}
+          />
+        )}
+
+        {explorationMode === explorationModes.EXPLORATION_VISUALIZE && (
+          <ExplorationResultsViewer
+            updateFlag={updateFlag}
+            setUpdateFlag={setUpdateFlag}
           />
         )}
       </Box>

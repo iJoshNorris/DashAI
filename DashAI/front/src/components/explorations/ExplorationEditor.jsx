@@ -47,7 +47,15 @@ const steps = [
   },
 ];
 
-function ExplorationEditor({ open = false, handleCloseDialog = () => {} }) {
+/**
+ * Component to create or edit an exploration. It is a dialog that contains
+ * multiple steps.
+ * It handles the submission of the exploration and explorers.
+ * @param {Object} props
+ * @param {boolean} props.open - Dialog open state
+ * @param {function} props.handleCloseDialog - Function to close the dialog
+ */
+function ExplorationEditor({ open = true, handleCloseDialog = () => {} }) {
   const { explorationData, explorationMode } = useExplorationsContext();
   const { enqueueSnackbar } = useSnackbar();
 

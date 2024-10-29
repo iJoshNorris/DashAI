@@ -8,13 +8,19 @@ import {
   Grid,
   Typography,
   IconButton,
-  Box,
 } from "@mui/material";
 import { Close as CloseIcon } from "@mui/icons-material";
 
 import { useExplorationsContext } from "./context";
 import { ExplorationModule } from ".";
 
+/**
+ * Component that displays the exploration module content in a modal.
+ * It uses the context to get current dataset, exploration and explorer data.
+ * @param {object} props
+ * @param {boolean} props.open - Flag to open the modal.
+ * @param {function} props.onClose - Function to call when the modal is closed.
+ */
 function ExplorationsModal({ open, onClose = () => {} }) {
   const { explorationMode, explorationData, explorerData } =
     useExplorationsContext();
@@ -40,6 +46,8 @@ function ExplorationsModal({ open, onClose = () => {} }) {
       PaperProps={{
         sx: {
           minHeight: "80vh",
+          overflow: "auto",
+          maxHeight: "90vh",
         },
       }}
     >
@@ -71,9 +79,7 @@ function ExplorationsModal({ open, onClose = () => {} }) {
         </DialogTitle>
       )}
       <DialogContent dividers={explorationMode.showModalTitle}>
-        <Box>
-          <ExplorationModule />
-        </Box>
+        <ExplorationModule />
       </DialogContent>
     </Dialog>
   );
