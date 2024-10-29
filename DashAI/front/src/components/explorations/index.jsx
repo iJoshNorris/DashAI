@@ -3,6 +3,8 @@ export { default as ExplorationModule } from "./Explorations";
 export { default as ExplorationsModal } from "./Modal";
 export { default as ExplorationsTable } from "./ExplorationsTable";
 export { default as ExplorationEditor } from "./ExplorationEditor";
+export { default as ExplorationRunner } from "./ExplorationRunner";
+export { default as ExplorationResultsViewer } from "./ResultsViewer";
 export { default as ExplorersTable } from "./explorers/ExplorersTable";
 export { default as EditParametersDialog } from "./explorers/EditParametersDialog";
 export { default as EditColumnsDialog } from "./explorers/EditColumnsDialog";

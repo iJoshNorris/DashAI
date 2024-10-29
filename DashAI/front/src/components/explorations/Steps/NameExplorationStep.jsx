@@ -5,6 +5,11 @@ import { TextField, Grid, Typography } from "@mui/material";
 
 import { useExplorationsContext } from "../context";
 
+/**
+ * Exploration step to set the name and description of the exploration
+ * @param {Object} props
+ * @param {Function} props.onValidation - Callback function to run after the validation of the step
+ */
 function NameExplorationStep({ onValidation = () => {} }) {
   const { explorationData, setExplorationData } = useExplorationsContext();
   const { name, description } = explorationData;

@@ -23,6 +23,13 @@ import { ExplorersTable } from "../";
 
 import { getComponents } from "../../../api/component";
 
+/**
+ * Render the option for the Autocomplete component with a tooltip.
+ * @param {Object} props
+ * @param {Object} option - The option object
+ * @param {Function} _ - The getOptionLabel function
+ * @param {Object} ownerState - The state of the Autocomplete component
+ */
 const renderOption = (props, option, _, ownerState) => {
   const { key, ...optionProps } = props;
   return (
@@ -54,6 +61,11 @@ const renderOption = (props, option, _, ownerState) => {
   );
 };
 
+/**
+ * Exploration step to configure the explorers to use in the exploration
+ * @param {Object} props
+ * @param {Function} props.onValidation - Callback function to run after the validation of the step
+ */
 function ConfigureExplorersStep({ onValidation = () => {} }) {
   const {
     explorationData,
@@ -70,6 +82,10 @@ function ConfigureExplorersStep({ onValidation = () => {} }) {
   const [value, setValue] = useState(null);
   const [inputValue, setInputValue] = useState("");
 
+  /**
+   * Validates the explorers options based on the dataset columns and the explorer metadata
+   * @param {Array} data - The explorer components data
+   */
   const validateOptions = useCallback((data) => {
     const options = data.map((explorer, index) => {
       const allowedDtypes = explorer.metadata.allowed_dtypes;
@@ -214,6 +230,11 @@ function ConfigureExplorersStep({ onValidation = () => {} }) {
   const { defaultValues: defaultParameters } = useSchema({
     modelName: explorerData.exploration_type,
   });
+
+  /**
+   * Adds the selected explorer to the exploration with the default parameters and
+   * appropiate columns.
+   */
   const handleAddButton = () => {
     const newExplorer = { ...explorerData };
     newExplorer.parameters = defaultParameters;
@@ -245,7 +266,7 @@ function ConfigureExplorersStep({ onValidation = () => {} }) {
     setValue(null);
   };
 
-  // checks if there is at least 1 model added to enable the "Next" button
+  // checks if there is at least 1 explorer added to enable the "Next" button
   useEffect(() => {
     if (explorationData.explorers.length > 0) {
       onValidation(true);
