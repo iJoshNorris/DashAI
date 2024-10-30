@@ -39,6 +39,8 @@ from DashAI.back.converters import (
     RobustScaler,
     SplineTransformer,
     StandardScaler,
+    LinearDiscriminantAnalysis,
+    QuadraticDiscriminantAnalysis,
 )
 
 from DashAI.back.dataloaders import (
@@ -163,6 +165,8 @@ INITIAL_COMPONENTS = [
     RobustScaler,
     SplineTransformer,
     StandardScaler,
+    LinearDiscriminantAnalysis,
+    QuadraticDiscriminantAnalysis,
 ]
 
 

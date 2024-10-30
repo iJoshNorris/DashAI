@@ -46,3 +46,11 @@ from DashAI.back.converters.scikit_learn.quantile_transformer import QuantileTra
 from DashAI.back.converters.scikit_learn.robust_scaler import RobustScaler
 from DashAI.back.converters.scikit_learn.spline_transformer import SplineTransformer
 from DashAI.back.converters.scikit_learn.standard_scaler import StandardScaler
+
+# Discriminant analysis module
+from DashAI.back.converters.scikit_learn.linear_discriminant_analysis import (
+    LinearDiscriminantAnalysis,
+)
+from DashAI.back.converters.scikit_learn.quadratic_discriminant_analysis import (
+    QuadraticDiscriminantAnalysis,
+)
