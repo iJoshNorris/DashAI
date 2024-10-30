@@ -21,7 +21,20 @@ from DashAI.back.converters import (
     RobustScaler,
     SplineTransformer,
     StandardScaler,
+    DictionaryLearning,
+    FactorAnalysis,
+    FastICA,
+    IncrementalPCA,
+    KernelPCA,
+    LatentDirichletAllocation,
+    MiniBatchDictionaryLearning,
+    MiniBatchSparsePCA,
+    NMF,
+    MiniBatchNMF,
     PCA,
+    SparsePCA,
+    SparseCoder,
+    TruncatedSVD,
 )
 
 from DashAI.back.dataloaders import (
@@ -128,7 +141,20 @@ INITIAL_COMPONENTS = [
     RobustScaler,
     SplineTransformer,
     StandardScaler,
+    DictionaryLearning,
+    FactorAnalysis,
+    FastICA,
+    IncrementalPCA,
+    KernelPCA,
+    LatentDirichletAllocation,
+    MiniBatchDictionaryLearning,
+    MiniBatchSparsePCA,
+    NMF,
+    MiniBatchNMF,
     PCA,
+    SparsePCA,
+    SparseCoder,
+    TruncatedSVD,
 ]
 
 

@@ -6,7 +6,9 @@ from DashAI.back.converters.scikit_learn.label_binarizer import LabelBinarizer
 from DashAI.back.converters.scikit_learn.label_encoder import LabelEncoder
 from DashAI.back.converters.scikit_learn.max_abs_scaler import MaxAbsScaler
 from DashAI.back.converters.scikit_learn.min_max_scaler import MinMaxScaler
-from DashAI.back.converters.scikit_learn.multi_label_binarizer import MultiLabelBinarizer
+from DashAI.back.converters.scikit_learn.multi_label_binarizer import (
+    MultiLabelBinarizer,
+)
 from DashAI.back.converters.scikit_learn.normalizer import Normalizer
 from DashAI.back.converters.scikit_learn.one_hot_encoder import OneHotEncoder
 from DashAI.back.converters.scikit_learn.ordinal_encoder import OrdinalEncoder
@@ -16,4 +18,21 @@ from DashAI.back.converters.scikit_learn.quantile_transformer import QuantileTra
 from DashAI.back.converters.scikit_learn.robust_scaler import RobustScaler
 from DashAI.back.converters.scikit_learn.spline_transformer import SplineTransformer
 from DashAI.back.converters.scikit_learn.standard_scaler import StandardScaler
+from DashAI.back.converters.scikit_learn.dictionary_learning import DictionaryLearning
+from DashAI.back.converters.scikit_learn.factor_analysis import FactorAnalysis
+from DashAI.back.converters.scikit_learn.fast_ica import FastICA
+from DashAI.back.converters.scikit_learn.incremental_pca import IncrementalPCA
+from DashAI.back.converters.scikit_learn.kernel_pca import KernelPCA
+from DashAI.back.converters.scikit_learn.latent_dirichlet_allocation import (
+    LatentDirichletAllocation,
+)
+from DashAI.back.converters.scikit_learn.mini_batch_dictionary_learning import (
+    MiniBatchDictionaryLearning,
+)
+from DashAI.back.converters.scikit_learn.mini_batch_sparse_pca import MiniBatchSparsePCA
+from DashAI.back.converters.scikit_learn.nmf import NMF
+from DashAI.back.converters.scikit_learn.mini_batch_nmf import MiniBatchNMF
 from DashAI.back.converters.scikit_learn.pca import PCA
+from DashAI.back.converters.scikit_learn.sparse_pca import SparsePCA
+from DashAI.back.converters.scikit_learn.sparse_coder import SparseCoder
+from DashAI.back.converters.scikit_learn.truncated_svd import TruncatedSVD
