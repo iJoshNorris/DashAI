@@ -1,4 +1,32 @@
 # flake8: noqa
+
+# Cross decomposition module
+from DashAI.back.converters.scikit_learn.cca import CCA
+from DashAI.back.converters.scikit_learn.pls_canonical import PLSCanonical
+from DashAI.back.converters.scikit_learn.pls_regression import PLSRegression
+from DashAI.back.converters.scikit_learn.pls_svd import PLSSVD
+
+# Decomposition module
+from DashAI.back.converters.scikit_learn.dictionary_learning import DictionaryLearning
+from DashAI.back.converters.scikit_learn.factor_analysis import FactorAnalysis
+from DashAI.back.converters.scikit_learn.fast_ica import FastICA
+from DashAI.back.converters.scikit_learn.incremental_pca import IncrementalPCA
+from DashAI.back.converters.scikit_learn.kernel_pca import KernelPCA
+from DashAI.back.converters.scikit_learn.latent_dirichlet_allocation import (
+    LatentDirichletAllocation,
+)
+from DashAI.back.converters.scikit_learn.mini_batch_dictionary_learning import (
+    MiniBatchDictionaryLearning,
+)
+from DashAI.back.converters.scikit_learn.mini_batch_sparse_pca import MiniBatchSparsePCA
+from DashAI.back.converters.scikit_learn.nmf import NMF
+from DashAI.back.converters.scikit_learn.mini_batch_nmf import MiniBatchNMF
+from DashAI.back.converters.scikit_learn.pca import PCA
+from DashAI.back.converters.scikit_learn.sparse_pca import SparsePCA
+from DashAI.back.converters.scikit_learn.sparse_coder import SparseCoder
+from DashAI.back.converters.scikit_learn.truncated_svd import TruncatedSVD
+
+# Preprocessing module
 from DashAI.back.converters.scikit_learn.binarizer import Binarizer
 from DashAI.back.converters.scikit_learn.k_bins_discretizer import KBinsDiscretizer
 from DashAI.back.converters.scikit_learn.kernel_centerer import KernelCenterer
@@ -18,21 +46,3 @@ from DashAI.back.converters.scikit_learn.quantile_transformer import QuantileTra
 from DashAI.back.converters.scikit_learn.robust_scaler import RobustScaler
 from DashAI.back.converters.scikit_learn.spline_transformer import SplineTransformer
 from DashAI.back.converters.scikit_learn.standard_scaler import StandardScaler
-from DashAI.back.converters.scikit_learn.dictionary_learning import DictionaryLearning
-from DashAI.back.converters.scikit_learn.factor_analysis import FactorAnalysis
-from DashAI.back.converters.scikit_learn.fast_ica import FastICA
-from DashAI.back.converters.scikit_learn.incremental_pca import IncrementalPCA
-from DashAI.back.converters.scikit_learn.kernel_pca import KernelPCA
-from DashAI.back.converters.scikit_learn.latent_dirichlet_allocation import (
-    LatentDirichletAllocation,
-)
-from DashAI.back.converters.scikit_learn.mini_batch_dictionary_learning import (
-    MiniBatchDictionaryLearning,
-)
-from DashAI.back.converters.scikit_learn.mini_batch_sparse_pca import MiniBatchSparsePCA
-from DashAI.back.converters.scikit_learn.nmf import NMF
-from DashAI.back.converters.scikit_learn.mini_batch_nmf import MiniBatchNMF
-from DashAI.back.converters.scikit_learn.pca import PCA
-from DashAI.back.converters.scikit_learn.sparse_pca import SparsePCA
-from DashAI.back.converters.scikit_learn.sparse_coder import SparseCoder
-from DashAI.back.converters.scikit_learn.truncated_svd import TruncatedSVD
