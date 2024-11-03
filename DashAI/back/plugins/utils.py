@@ -205,6 +205,10 @@ def register_plugin_components(
         The current app component registry
     """
     for plugin in plugins:
+        print(f"Plugin name: {plugin.__name__}")
+        if plugin.__name__ in component_registry:
+            raise ValueError(f"Plugin {plugin} already registered")
+    for plugin in plugins:
         component_registry.register_component(plugin)
 
 

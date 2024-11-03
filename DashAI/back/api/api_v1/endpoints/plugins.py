@@ -254,7 +254,14 @@ async def update_plugin(
                 )
             if params.new_status == PluginStatus.INSTALLED:
                 installed_components = install_plugin(plugin_name)
-                register_plugin_components(installed_components, component_registry)
+                try:
+                    register_plugin_components(installed_components, component_registry)
+                except ValueError as e:
+                    uninstall_plugin(plugin_name)
+                    raise HTTPException(
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        detail="Some components are already registered",
+                    ) from e
             elif (
                 plugin.status == PluginStatus.INSTALLED
                 and params.new_status == PluginStatus.REGISTERED
