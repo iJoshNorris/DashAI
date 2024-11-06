@@ -1,18 +1,16 @@
 from typing import List
 from llama_cpp import Llama
-
 from DashAI.back.core.schema_fields import (
     BaseSchema,
     int_field,
     schema_field,
 )
-
 from DashAI.back.models.llm_generation_model import LLMGenerationModel
 
 
 class LlamaSchema(BaseSchema):
     """Schema for Llama text generation model."""
-
+    
     max_tokens: schema_field(
         int_field(ge=1),
         placeholder=100,
@@ -25,10 +23,18 @@ class LlamaModel(LLMGenerationModel):
 
     SCHEMA = LlamaSchema
 
-    def __init__(self, model_path: str, **kwargs):
+    def __init__(self, **kwargs):
         kwargs = self.validate_and_transform(kwargs)
-        self.model = Llama(model_path=model_path)
+        self.repo_id = "Qwen/Qwen2-0.5B-Instruct-GGUF"  # Repositorio de Hugging Face
+        self.filename = "*q8_0.gguf"  # Archivo del modelo
         self.max_tokens = kwargs.pop("max_tokens", 100)
+
+        # Descargar y cargar el modelo desde Hugging Face
+        self.model = Llama.from_pretrained(
+            repo_id=self.repo_id,
+            filename=self.filename,
+            verbose=True
+        )
 
     def generate(self, prompt: str) -> str:
         """Generate text based on prompts."""

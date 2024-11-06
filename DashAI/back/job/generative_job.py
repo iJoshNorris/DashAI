@@ -56,14 +56,14 @@ class GenerativeJob(BaseJob):
         )
 
         model_class = component_registry[generative_process.model_name]["class"]
-
         params = generative_process.parameters
 
-        model: BaseModel = model_class(
-            num_inference_steps=params["num_inference_steps"],
-            guidance_scale=params["guidance_scale"],
-            device=params["device"],
-        )
+        try:
+            model: BaseModel = model_class(**params)
+        except TypeError as e:
+            logging.error(e)
+
+        # {"num_inference_steps": 5, "guidance_scale": 6, "device": "cuda"}
 
         prompt = generative_process.input_data
 
@@ -71,18 +71,26 @@ class GenerativeJob(BaseJob):
         generative_process.set_status_as_started()
         db.commit()
 
-        # Generate the image
-        image: Image.Image = model.generate(prompt)
+        # Generate
+        out: Image.Image | str = model.generate(prompt)
 
-        # TODO: SANITIZE THE IMAGE FILE
-        save_dir = Path.home() / ".DashAI" / "generated-images"
-        image_path = save_dir / f"{generative_process.name}.png"
+        if type(out) == Image.Image:
 
-        # Save the image
-        image.save(image_path, format="PNG")
+            # TODO: SANITIZE THE IMAGE FILE
+            save_dir = Path.home() / ".DashAI" / "generated-images"
+            image_path = save_dir / f"{generative_process.name}.png"
 
-        # Update the generative_process with the output path
-        generative_process.output_path = str(image_path)
+            # Save the image
+            out.save(image_path, format="PNG")
+
+            # Update the generative_process with the output path
+            generative_process.output_path = str(image_path)
+
+        elif type(out) == str:
+            generative_process.output_path = str(out)
+
+        else:
+            pass
 
         # Finish the generation process
         generative_process.set_status_as_finished()
