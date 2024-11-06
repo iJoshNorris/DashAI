@@ -74,23 +74,13 @@ class GenerativeJob(BaseJob):
         # Generate
         out: Image.Image | str = model.generate(prompt)
 
-        if type(out) == Image.Image:
+        # Process output and store it
+        output_path: str = model.process_output(
+            out, generative_process.name, config["GENERATIVE_PROCESS_PATH"]
+        )
 
-            # TODO: SANITIZE THE IMAGE FILE
-            save_dir = Path.home() / ".DashAI" / "generated-images"
-            image_path = save_dir / f"{generative_process.name}.png"
-
-            # Save the image
-            out.save(image_path, format="PNG")
-
-            # Update the generative_process with the output path
-            generative_process.output_path = str(image_path)
-
-        elif type(out) == str:
-            generative_process.output_path = str(out)
-
-        else:
-            pass
+        # Update the generative_process with the output path
+        generative_process.output_path = str(output_path)
 
         # Finish the generation process
         generative_process.set_status_as_finished()

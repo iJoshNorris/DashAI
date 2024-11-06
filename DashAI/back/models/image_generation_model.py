@@ -1,7 +1,7 @@
-from DashAI.back.models.base_model import BaseModel
+from DashAI.back.models.generative_model import GenerativeModel
 
 
-class ImageGenerationModel(BaseModel):
+class ImageGenerationModel(GenerativeModel):
     """Class for models associated to ImageGenerationProcess."""
 
     COMPATIBLE_COMPONENTS = ["ImageGenerationProcess"]
