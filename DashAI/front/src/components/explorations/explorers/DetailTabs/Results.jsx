@@ -4,7 +4,11 @@ import PropTypes from "prop-types";
 import { Box, CircularProgress, Tooltip, Typography } from "@mui/material";
 
 import { getExplorerResults } from "../../../../api/explorer";
-import { TabularVisualizer, PlotlyJsonVisualizer } from "../../Visualizations";
+import {
+  TabularVisualizer,
+  PlotlyJsonVisualizer,
+  ImageVisualizer,
+} from "../../Visualizations";
 
 /**
  * NullCell component to render null values in the tabular visualizer
@@ -33,10 +37,14 @@ function NullCell({}) {
 const visualizers = {
   tabular: TabularVisualizer,
   plotly_json: PlotlyJsonVisualizer,
+  image_base64: ImageVisualizer,
+  image_url: ImageVisualizer,
 };
 const visualizersKeys = {
   tabular: "tabular",
   plotly_json: "plotly_json",
+  image_base64: "image_base64",
+  image_url: "image_url",
 };
 
 const ORIENTATIONS = {
@@ -162,6 +170,14 @@ function Results({ id, updateFlag = false, setUpdateFlag = () => {} }) {
         if (results.type === visualizersKeys.plotly_json) {
           setData(JSON.parse(results.data));
         }
+
+        if (results.type === visualizersKeys.image_base64) {
+          setData(results.data);
+        }
+
+        if (results.type === visualizersKeys.image_url) {
+          setData(results.data);
+        }
       })
       .catch((error) => {
         console.error(error);
@@ -209,6 +225,14 @@ function Results({ id, updateFlag = false, setUpdateFlag = () => {} }) {
 
       {!loading && dataType === visualizersKeys.plotly_json && (
         <PlotlyJsonVisualizer data={data} />
+      )}
+
+      {!loading && dataType === visualizersKeys.image_base64 && (
+        <ImageVisualizer data={`data:image/png;base64,${data}`} />
+      )}
+
+      {!loading && dataType === visualizersKeys.image_url && (
+        <ImageVisualizer data={data} />
       )}
     </Box>
   );
