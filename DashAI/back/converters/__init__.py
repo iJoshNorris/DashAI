@@ -91,3 +91,12 @@ from DashAI.back.converters.scikit_learn.polynomial_count_sketch import (
 )
 from DashAI.back.converters.scikit_learn.rbf_sampler import RBFSampler
 from DashAI.back.converters.scikit_learn.skewed_chi_2_sampler import SkewedChi2Sampler
+
+# Manifold learning module
+from DashAI.back.converters.scikit_learn.isomap import Isomap
+from DashAI.back.converters.scikit_learn.locally_linear_embedding import (
+    LocallyLinearEmbedding,
+)
+from DashAI.back.converters.scikit_learn.mds import MDS
+from DashAI.back.converters.scikit_learn.spectral_embedding import SpectralEmbedding
+from DashAI.back.converters.scikit_learn.tsne import TSNE

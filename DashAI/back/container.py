@@ -62,6 +62,11 @@ from DashAI.back.converters import (
     PolynomialCountSketch,
     RBFSampler,
     SkewedChi2Sampler,
+    Isomap,
+    LocallyLinearEmbedding,
+    MDS,
+    SpectralEmbedding,
+    TSNE,
 )
 
 from DashAI.back.dataloaders import (
@@ -209,6 +214,11 @@ INITIAL_COMPONENTS = [
     PolynomialCountSketch,
     RBFSampler,
     SkewedChi2Sampler,
+    Isomap,
+    LocallyLinearEmbedding,
+    MDS,
+    SpectralEmbedding,
+    TSNE,
 ]
 
 
