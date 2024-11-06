@@ -54,3 +54,13 @@ from DashAI.back.converters.scikit_learn.linear_discriminant_analysis import (
 from DashAI.back.converters.scikit_learn.quadratic_discriminant_analysis import (
     QuadraticDiscriminantAnalysis,
 )
+
+# Feature extraction module
+from DashAI.back.converters.scikit_learn.dict_vectorizer import DictVectorizer
+from DashAI.back.converters.scikit_learn.feature_hasher import FeatureHasher
+
+# Feature extraction from text module
+from DashAI.back.converters.scikit_learn.count_vectorizer import CountVectorizer
+from DashAI.back.converters.scikit_learn.hashing_vectorizer import HashingVectorizer
+from DashAI.back.converters.scikit_learn.tfidf_transformer import TfidfTransformer
+from DashAI.back.converters.scikit_learn.tfidf_vectorizer import TfidfVectorizer

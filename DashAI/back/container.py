@@ -41,6 +41,12 @@ from DashAI.back.converters import (
     StandardScaler,
     LinearDiscriminantAnalysis,
     QuadraticDiscriminantAnalysis,
+    DictVectorizer,
+    FeatureHasher,
+    CountVectorizer,
+    HashingVectorizer,
+    TfidfTransformer,
+    TfidfVectorizer,
 )
 
 from DashAI.back.dataloaders import (
@@ -167,6 +173,12 @@ INITIAL_COMPONENTS = [
     StandardScaler,
     LinearDiscriminantAnalysis,
     QuadraticDiscriminantAnalysis,
+    DictVectorizer,
+    FeatureHasher,
+    CountVectorizer,
+    HashingVectorizer,
+    TfidfTransformer,
+    TfidfVectorizer,
 ]
 
 
