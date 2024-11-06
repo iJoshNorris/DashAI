@@ -16,7 +16,6 @@ function ImageVisualizer({ data }) {
 
 ImageVisualizer.propTypes = {
   data: PropTypes.string.isRequired,
-  origin: PropTypes.string,
 };
 
 export default ImageVisualizer;
