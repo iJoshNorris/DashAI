@@ -57,6 +57,11 @@ from DashAI.back.converters import (
     SimpleImputer,
     MissingIndicator,
     KNNImputer,
+    AdditiveChi2Sampler,
+    Nystroem,
+    PolynomialCountSketch,
+    RBFSampler,
+    SkewedChi2Sampler,
 )
 
 from DashAI.back.dataloaders import (
@@ -199,6 +204,11 @@ INITIAL_COMPONENTS = [
     SimpleImputer,
     MissingIndicator,
     KNNImputer,
+    AdditiveChi2Sampler,
+    Nystroem,
+    PolynomialCountSketch,
+    RBFSampler,
+    SkewedChi2Sampler,
 ]
 
 

@@ -80,3 +80,14 @@ from DashAI.back.converters.scikit_learn.variance_threshold import VarianceThres
 from DashAI.back.converters.scikit_learn.simple_imputer import SimpleImputer
 from DashAI.back.converters.scikit_learn.missing_indicator import MissingIndicator
 from DashAI.back.converters.scikit_learn.knn_imputer import KNNImputer
+
+# Kernel approximation module
+from DashAI.back.converters.scikit_learn.additive_chi_2_sampler import (
+    AdditiveChi2Sampler,
+)
+from DashAI.back.converters.scikit_learn.nystroem import Nystroem
+from DashAI.back.converters.scikit_learn.polynomial_count_sketch import (
+    PolynomialCountSketch,
+)
+from DashAI.back.converters.scikit_learn.rbf_sampler import RBFSampler
+from DashAI.back.converters.scikit_learn.skewed_chi_2_sampler import SkewedChi2Sampler
