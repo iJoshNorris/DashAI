@@ -75,3 +75,8 @@ from DashAI.back.converters.scikit_learn.select_fpr import SelectFpr
 from DashAI.back.converters.scikit_learn.select_fdr import SelectFdr
 from DashAI.back.converters.scikit_learn.select_fwe import SelectFwe
 from DashAI.back.converters.scikit_learn.variance_threshold import VarianceThreshold
+
+# Impute module
+from DashAI.back.converters.scikit_learn.simple_imputer import SimpleImputer
+from DashAI.back.converters.scikit_learn.missing_indicator import MissingIndicator
+from DashAI.back.converters.scikit_learn.knn_imputer import KNNImputer

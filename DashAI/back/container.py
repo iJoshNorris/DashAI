@@ -54,6 +54,9 @@ from DashAI.back.converters import (
     SelectFdr,
     SelectFwe,
     VarianceThreshold,
+    SimpleImputer,
+    MissingIndicator,
+    KNNImputer,
 )
 
 from DashAI.back.dataloaders import (
@@ -193,6 +196,9 @@ INITIAL_COMPONENTS = [
     SelectFdr,
     SelectFwe,
     VarianceThreshold,
+    SimpleImputer,
+    MissingIndicator,
+    KNNImputer,
 ]
 
 
