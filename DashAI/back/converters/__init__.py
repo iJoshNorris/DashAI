@@ -64,3 +64,14 @@ from DashAI.back.converters.scikit_learn.count_vectorizer import CountVectorizer
 from DashAI.back.converters.scikit_learn.hashing_vectorizer import HashingVectorizer
 from DashAI.back.converters.scikit_learn.tfidf_transformer import TfidfTransformer
 from DashAI.back.converters.scikit_learn.tfidf_vectorizer import TfidfVectorizer
+
+# Feature selection module
+from DashAI.back.converters.scikit_learn.generic_univariate_select import (
+    GenericUnivariateSelect,
+)
+from DashAI.back.converters.scikit_learn.select_percentile import SelectPercentile
+from DashAI.back.converters.scikit_learn.select_k_best import SelectKBest
+from DashAI.back.converters.scikit_learn.select_fpr import SelectFpr
+from DashAI.back.converters.scikit_learn.select_fdr import SelectFdr
+from DashAI.back.converters.scikit_learn.select_fwe import SelectFwe
+from DashAI.back.converters.scikit_learn.variance_threshold import VarianceThreshold

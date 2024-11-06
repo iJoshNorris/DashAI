@@ -47,6 +47,13 @@ from DashAI.back.converters import (
     HashingVectorizer,
     TfidfTransformer,
     TfidfVectorizer,
+    GenericUnivariateSelect,
+    SelectPercentile,
+    SelectKBest,
+    SelectFpr,
+    SelectFdr,
+    SelectFwe,
+    VarianceThreshold,
 )
 
 from DashAI.back.dataloaders import (
@@ -179,6 +186,13 @@ INITIAL_COMPONENTS = [
     HashingVectorizer,
     TfidfTransformer,
     TfidfVectorizer,
+    GenericUnivariateSelect,
+    SelectPercentile,
+    SelectKBest,
+    SelectFpr,
+    SelectFdr,
+    SelectFwe,
+    VarianceThreshold,
 ]
 
 
