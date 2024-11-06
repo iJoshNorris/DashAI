@@ -77,3 +77,16 @@ class StableDiffusionModel(ImageGenerationModel):
         )
         model.pipeline = pipeline
         return model
+
+    def process_output(self, out: Image.Image, file_name: str, path: str) -> str:
+        # TODO: SANITIZE THE IMAGE FILE
+        save_dir = path / "stable-diffusion-images"
+        if not save_dir.exists():
+            save_dir.mkdir(parents=True)
+
+        image_path = save_dir / f"{file_name}.png"
+
+        # Save the image
+        out.save(image_path, format="PNG")
+
+        return image_path
