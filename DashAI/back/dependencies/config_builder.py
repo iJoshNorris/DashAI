@@ -36,6 +36,7 @@ def build_config_dict(
             * 'DATASETS_PATH': The path to the datasets directory
                 (relative to LOCAL_PATH).
             * 'RUNS_PATH': The path to the runs directory (relative to LOCAL_PATH).
+            * 'GENERATIVE_PROCESS_PATH: The path to the generative process directory (relative to LOCAL_PATH).
             * 'FRONT_BUILD_PATH': The absolute path to the front-end build directory.
             * 'LOGGING_LEVEL': The configured logging level.
     """
@@ -55,6 +56,7 @@ def build_config_dict(
     config["DATASETS_PATH"] = local_path / config["DATASETS_PATH"]
     config["EXPLANATIONS_PATH"] = local_path / config["EXPLANATIONS_PATH"]
     config["RUNS_PATH"] = local_path / config["RUNS_PATH"]
+    config["GENERATIVE_PROCESS_PATH"] = local_path / config["GENERATIVE_PROCESS_PATH"]
     config["FRONT_BUILD_PATH"] = pathlib.Path(config["FRONT_BUILD_PATH"]).absolute()
     config["LOGGING_LEVEL"] = getattr(logging, logging_level)
 
