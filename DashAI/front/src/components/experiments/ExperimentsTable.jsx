@@ -18,7 +18,6 @@ import RunnerDialog from "./RunnerDialog";
 import Results from "../../pages/results/Results";
 
 import DeleteItemModal from "../custom/DeleteItemModal";
-import PipelinesModal from "./PipelinesModal";
 
 function ExperimentsTable({
   handleOpenNewExperimentModal,
@@ -147,7 +146,6 @@ function ExperimentsTable({
             key="delete-button"
             deleteFromTable={() => handleDeleteExperiment(params.id)}
           />,
-          <PipelinesModal key="pipelines-modal" experiment={params.row} />,
         ],
       },
     ],

@@ -4,6 +4,7 @@ import {
   FileUpload as FileUploadIcon,
   Science as ScienceIcon,
   Insights as InsightsIcon,
+  Merge as MergeIcon, // Add icon for pipelines
 } from "@mui/icons-material";
 import HomeButton from "../../components/HomeButton";
 import CustomLayout from "../../components/custom/CustomLayout";
@@ -47,6 +48,15 @@ function Home() {
             description="Explore and understand the decision-making process behind your models."
             to="/app/explainers"
             Icon={InsightsIcon}
+          />
+        </Grid>
+        {/* Pipelines button */}
+        <Grid item md={4} sm={6} xs={12}>
+          <HomeButton
+            title="Pipelines"
+            description="Create and manage pipelines."
+            to="/app/pipelines" 
+            Icon={MergeIcon}
           />
         </Grid>
       </Grid>

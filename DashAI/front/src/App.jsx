@@ -10,6 +10,7 @@ import ExplainersDashboard from "./components/explainers/ExplainersDashboard";
 import ExplainersPage from "./pages/ExplainersPage";
 import ExplainerData from "./components/explainers/ExplainerData";
 import ResponsiveAppBar from "./components/ResponsiveAppBar";
+import PipelinesPage from "./pages/pipelines/Pipelines";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
             element={<ExplainerData />}
           />
         </Route>
+        <Route path="/app/pipelines" element={<PipelinesPage />} />
       </Routes>
     </BrowserRouter>
   );
