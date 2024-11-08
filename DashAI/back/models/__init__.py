@@ -1,4 +1,5 @@
 # flake8: noqa
+from DashAI.back.models.base_generative_model import BaseGenerativeModel
 from DashAI.back.models.base_model import BaseModel
 from DashAI.back.models.hugging_face.distilbert_transformer import DistilBertTransformer
 from DashAI.back.models.hugging_face.opus_mt_en_es_transformer import (
@@ -6,6 +7,7 @@ from DashAI.back.models.hugging_face.opus_mt_en_es_transformer import (
 )
 from DashAI.back.models.hugging_face.stable_diffusion_model import StableDiffusionModel
 from DashAI.back.models.hugging_face.vit_transformer import ViTTransformer
+from DashAI.back.models.image_generation_model import ImageGenerationModel
 from DashAI.back.models.scikit_learn.bow_text_classification_model import (
     BagOfWordsTextClassificationModel,
 )
