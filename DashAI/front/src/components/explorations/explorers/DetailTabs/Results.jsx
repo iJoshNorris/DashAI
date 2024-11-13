@@ -162,7 +162,12 @@ function Results({ id, updateFlag = false, setUpdateFlag = () => {} }) {
             results.config.orient,
           );
           setData({
-            columns: data.columns,
+            columns: data.columns.map((column) => {
+              return {
+                ...column,
+                flex: 1,
+              };
+            }),
             rows: data.rows,
           });
         }
