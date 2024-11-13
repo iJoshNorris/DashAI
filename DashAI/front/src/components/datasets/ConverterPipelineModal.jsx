@@ -19,6 +19,7 @@ import {
   InputLabel,
   Select,
   OutlinedInput,
+  Tooltip,
 } from "@mui/material";
 import { ArrowBackOutlined, Cable } from "@mui/icons-material";
 import uuid from "react-uuid";
@@ -101,23 +102,25 @@ const ConverterPipelineModal = ({
     setExistingPipelines((prev) => [...prev, pipelineToAssign]);
 
     setConvertersToApply((prev) =>
-      prev.map((converter) => {
-        if (converter.id === converterToAdd.id) {
-          return {
-            ...converter,
-            pipelineId: pipelineId,
-            scope: converterToAdd.scope,
-            order: converterToAdd.order + 1, // Make room for the new pipeline
-          };
-        } else if (converter.order > converterToAdd.order) {
-          // Update the order of the converters that come after the new pipeline
-          return {
-            ...converter,
-            order: converter.order + 1,
-          };
-        }
-        return converter;
-      }).sort((a, b) => a.order - b.order),
+      prev
+        .map((converter) => {
+          if (converter.id === converterToAdd.id) {
+            return {
+              ...converter,
+              pipelineId: pipelineId,
+              scope: converterToAdd.scope,
+              order: converterToAdd.order + 1, // Make room for the new pipeline
+            };
+          } else if (converter.order > converterToAdd.order) {
+            // Update the order of the converters that come after the new pipeline
+            return {
+              ...converter,
+              order: converter.order + 1,
+            };
+          }
+          return converter;
+        })
+        .sort((a, b) => a.order - b.order),
     );
   };
 
@@ -129,61 +132,65 @@ const ConverterPipelineModal = ({
       updatePipelineOrder(pipelineToAssign.id, pipelineToAssign.order - 1);
 
       setConvertersToApply((prev) =>
-        prev.map((converter) => {
-          if (converter.id !== converterToAdd.id) {
-            if (
-              converter.pipelineId === pipelineToAssign.id &&
-              converter.order > converterToAdd.order
-            ) {
+        prev
+          .map((converter) => {
+            if (converter.id !== converterToAdd.id) {
+              if (
+                converter.pipelineId === pipelineToAssign.id &&
+                converter.order > converterToAdd.order
+              ) {
+                return {
+                  ...converter,
+                  order: converter.order - 1,
+                };
+              }
+              // If this converter is not in the same pipeline, do nothing
+              return converter;
+            } else {
+              let lastConverterInThisPipeline = prev.findLast(
+                (converter) => converter.pipelineId === pipelineToAssign.id,
+              );
               return {
                 ...converter,
-                order: converter.order - 1,
+                pipelineId: pipelineToAssign.id,
+                scope: pipelineToAssign.scope,
+                order: lastConverterInThisPipeline.order, // Take the place of the converter that was moved
               };
             }
-            // If this converter is not in the same pipeline, do nothing
-            return converter;
-          } else {
-            let lastConverterInThisPipeline = prev.findLast(
-              (converter) => converter.pipelineId === pipelineToAssign.id,
-            );
-            return {
-              ...converter,
-              pipelineId: pipelineToAssign.id,
-              scope: pipelineToAssign.scope,
-              order: lastConverterInThisPipeline.order, // Take the place of the converter that was moved
-            };
-          }
-        }).sort((a, b) => a.order - b.order),
+          })
+          .sort((a, b) => a.order - b.order),
       );
     } else {
       // The converter is being moved to a pipeline that comes before it
       setConvertersToApply((prev) =>
-        prev.map((converter) => {
-          let lastConverterInThisPipeline = prev.findLast(
-            (converter) => converter.pipelineId === pipelineToAssign.id,
-          );
-          if (converter.id !== converterToAdd.id) {
-            // If this converter is in between the pipeline to assign and the selected converter
-            if (
-              converter.order < converterToAdd.order
-              && converter.order > lastConverterInThisPipeline.order
-            ) {
+        prev
+          .map((converter) => {
+            let lastConverterInThisPipeline = prev.findLast(
+              (converter) => converter.pipelineId === pipelineToAssign.id,
+            );
+            if (converter.id !== converterToAdd.id) {
+              // If this converter is in between the pipeline to assign and the selected converter
+              if (
+                converter.order < converterToAdd.order &&
+                converter.order > lastConverterInThisPipeline.order
+              ) {
+                return {
+                  ...converter,
+                  order: converter.order + 1,
+                };
+              }
+              // If this converter is not in between, do nothing
+              return converter;
+            } else {
               return {
                 ...converter,
-                order: converter.order + 1,
+                pipelineId: pipelineToAssign.id,
+                scope: pipelineToAssign.scope,
+                order: lastConverterInThisPipeline.order + 1, // Add the converter to the end of the pipeline
               };
             }
-            // If this converter is not in between, do nothing
-            return converter;
-          } else {
-            return {
-              ...converter,
-              pipelineId: pipelineToAssign.id,
-              scope: pipelineToAssign.scope,
-              order: lastConverterInThisPipeline.order + 1, // Add the converter to the end of the pipeline
-            };
-          }
-        }).sort((a, b) => a.order - b.order),
+          })
+          .sort((a, b) => a.order - b.order),
       );
     }
   };
@@ -196,62 +203,66 @@ const ConverterPipelineModal = ({
     if (pipelineToDelete.length === 1) {
       deletePipeline(pipelineIdToRemove);
       setConvertersToApply((prev) =>
-        prev.map((converter) => {
-          if (converter.id === converterToAdd.id) {
-            return {
-              ...converter,
-              pipelineId: null,
-              order: converterToAdd.order - 1, // Take the place of the pipeline
-            };
-          }
-          if (converter.order > converterToAdd.order) {
-            // Update the order of the converters that come after the pipeline
-            return {
-              ...converter,
-              order: converter.order - 1,
-            };
-          }
-          return converter;
-        }).sort((a, b) => a.order - b.order),
-      );
-    }
-    // Otherwise, move the converter out of the pipeline
-    else {
-      setConvertersToApply((prev) =>
-        prev.map((converter) => {
-          if (converter.id !== converterToAdd.id) {
-            // If this converter is in the same pipeline
-            // and it comes after the converter to remove, update its order
-            if (
-              converter.pipelineId === pipelineIdToRemove &&
-              converter.order > converterToAdd.order
-            ) {
+        prev
+          .map((converter) => {
+            if (converter.id === converterToAdd.id) {
+              return {
+                ...converter,
+                pipelineId: null,
+                order: converterToAdd.order - 1, // Take the place of the pipeline
+              };
+            }
+            if (converter.order > converterToAdd.order) {
+              // Update the order of the converters that come after the pipeline
               return {
                 ...converter,
                 order: converter.order - 1,
               };
             }
-            // If this converter comes before the converter to remove
-            // or it is not in the same pipeline, do nothing
             return converter;
-          } else {
-            // If this converter is the one to remove
-            let lastConverterInThisPipeline = prev.findLast(
-              (converter) =>
+          })
+          .sort((a, b) => a.order - b.order),
+      );
+    }
+    // Otherwise, move the converter out of the pipeline
+    else {
+      setConvertersToApply((prev) =>
+        prev
+          .map((converter) => {
+            if (converter.id !== converterToAdd.id) {
+              // If this converter is in the same pipeline
+              // and it comes after the converter to remove, update its order
+              if (
                 converter.pipelineId === pipelineIdToRemove &&
-                converter.id !== converterToAdd.id,
-            );
-            return {
-              ...converter,
-              pipelineId: null,
-              scope: {
-                columns: [],
-                rows: [],
-              }, // Reset the scope
-              order: lastConverterInThisPipeline.order, // Move the converter out of the pipeline, taking the place of the last converter
-            };
-          }
-        }).sort((a, b) => a.order - b.order),
+                converter.order > converterToAdd.order
+              ) {
+                return {
+                  ...converter,
+                  order: converter.order - 1,
+                };
+              }
+              // If this converter comes before the converter to remove
+              // or it is not in the same pipeline, do nothing
+              return converter;
+            } else {
+              // If this converter is the one to remove
+              let lastConverterInThisPipeline = prev.findLast(
+                (converter) =>
+                  converter.pipelineId === pipelineIdToRemove &&
+                  converter.id !== converterToAdd.id,
+              );
+              return {
+                ...converter,
+                pipelineId: null,
+                scope: {
+                  columns: [],
+                  rows: [],
+                }, // Reset the scope
+                order: lastConverterInThisPipeline.order, // Move the converter out of the pipeline, taking the place of the last converter
+              };
+            }
+          })
+          .sort((a, b) => a.order - b.order),
       );
     }
   };
@@ -296,14 +307,20 @@ const ConverterPipelineModal = ({
 
   return (
     <React.Fragment>
-      <GridActionsCellItem
-        key="manage-pipeline-button"
-        icon={<Cable />}
-        label="Manage pipeline"
-        onClick={() => setOpen(true)}
+      <Tooltip
+        title={<Typography>Manage pipeline</Typography>}
+        placement="top"
+        arrow
       >
-        Manage pipeline
-      </GridActionsCellItem>
+        <GridActionsCellItem
+          key="manage-pipeline-button"
+          icon={<Cable />}
+          label="Manage pipeline"
+          onClick={() => setOpen(true)}
+        >
+          Manage pipeline
+        </GridActionsCellItem>
+      </Tooltip>
       <Dialog open={open} onClose={() => setOpen(false)}>
         <DialogTitle>
           <Box display="flex" alignItems="center">

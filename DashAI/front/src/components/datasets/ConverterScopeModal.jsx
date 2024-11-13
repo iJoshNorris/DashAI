@@ -18,6 +18,7 @@ import {
   Radio,
   Stack,
   DialogContentText,
+  Tooltip,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { TrackChanges, ArrowBackOutlined } from "@mui/icons-material";
@@ -169,14 +170,20 @@ const ConverterScopeModal = ({
 
   return (
     <React.Fragment>
-      <GridActionsCellItem
-        key="edit-scope-button"
-        icon={<TrackChanges />}
-        label="Set scope"
-        onClick={() => setOpen(true)}
+      <Tooltip
+        title={<Typography>Define scope</Typography>}
+        placement="top"
+        arrow
       >
-        Set scope
-      </GridActionsCellItem>
+        <GridActionsCellItem
+          key="edit-scope-button"
+          icon={<TrackChanges />}
+          label="Set scope"
+          onClick={() => setOpen(true)}
+        >
+          Set scope
+        </GridActionsCellItem>
+      </Tooltip>
       <Dialog open={open} onClose={() => setOpen(false)}>
         <DialogTitle>
           <Box display="flex" alignItems="center">

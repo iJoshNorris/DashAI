@@ -4,6 +4,7 @@ import { GridActionsCellItem } from "@mui/x-data-grid";
 import { Settings } from "@mui/icons-material";
 import FormSchemaDialog from "../shared/FormSchemaDialog";
 import FormSchemaWithSelectedModel from "../shared/FormSchemaWithSelectedModel";
+import { Tooltip, Typography } from "@mui/material";
 
 const ConverterEditorModal = ({
   converterToConfigure,
@@ -19,14 +20,20 @@ const ConverterEditorModal = ({
 
   return (
     <React.Fragment>
-      <GridActionsCellItem
-        key="edit-button"
-        icon={<Settings />}
-        label="Set"
-        onClick={() => setOpen(true)}
+      <Tooltip
+        title={<Typography>Set parameters</Typography>}
+        placement="top"
+        arrow
       >
-        Set
-      </GridActionsCellItem>
+        <GridActionsCellItem
+          key="edit-button"
+          icon={<Settings />}
+          label="Set"
+          onClick={() => setOpen(true)}
+        >
+          Set
+        </GridActionsCellItem>
+      </Tooltip>
       <FormSchemaDialog
         modelToConfigure={converterToConfigure}
         open={open}
