@@ -20,6 +20,7 @@ from DashAI.back.explainability import (
 )
 from DashAI.back.exploration import (
     DescribeExplorer,
+    RowExplorer,
     ScatterPlotExplorer,
     WordcloudExplorer,
 )
@@ -95,6 +96,7 @@ INITIAL_COMPONENTS = [
     DescribeExplorer,
     ScatterPlotExplorer,
     WordcloudExplorer,
+    RowExplorer,
 ]
 
 
