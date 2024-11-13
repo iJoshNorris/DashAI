@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { GridActionsCellItem } from "@mui/x-data-grid";
-import { Settings } from "@mui/icons-material";
+import { Settings, Help } from "@mui/icons-material";
 import {
   Dialog,
   DialogContent,
@@ -9,10 +9,12 @@ import {
   Grid,
   Button,
   DialogActions,
+  Tooltip,
   Typography,
+  IconButton,
 } from "@mui/material";
 import DatasetSummaryTable from "./DatasetSummaryTable";
-import ConverterSelector from "./ConverterSelector";
+import ConverterSelectorModal from "./ConverterSelectorModal";
 import ConverterTable from "./ConverterTable";
 import { useSnackbar } from "notistack";
 import { enqueueConverterJob as enqueueConverterJobRequest } from "../../api/job";
@@ -100,20 +102,26 @@ function ConvertDatasetModal({ datasetId }) {
 
   return (
     <React.Fragment>
-      <GridActionsCellItem
-        key="converter-component"
-        icon={<Settings />}
-        label="Apply converters"
-        onClick={() => setOpen(true)}
-        sx={{ color: "warning.main" }}
-      />
+      <Tooltip
+        title={<Typography>Modify dataset</Typography>}
+        placement="top"
+        arrow
+      >
+        <GridActionsCellItem
+          key="converter-component"
+          icon={<Settings />}
+          label="Modify dataset"
+          onClick={() => setOpen(true)}
+          sx={{ color: "warning.main" }}
+        />
+      </Tooltip>
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
         fullWidth
         maxWidth={"md"}
       >
-        <DialogTitle>Apply converters</DialogTitle>
+        <DialogTitle>Modify dataset</DialogTitle>
         <DialogContent dividers>
           <Grid
             container
@@ -126,18 +134,27 @@ function ConvertDatasetModal({ datasetId }) {
             {/* Dataset summary table */}
             <Grid item xs={12}>
               <Typography variant="subtitle1" component="h3" mb={1}>
-                Dataset preview
+                Dataset summary
               </Typography>
             </Grid>
             <DatasetSummaryTable datasetId={datasetId} />
 
             {/* Converter selector */}
-            <Grid item xs={12}>
+            <Grid item xs={12} display={"flex"} alignItems={"center"} gap={2}>
               <Typography variant="subtitle1" component="h3" mb={1}>
-                Add converter
+                List of converters
               </Typography>
+              <Tooltip
+                title={`Converters are for modifying the data in a supervised or unsupervised way
+    (e.g. by adding, changing, or removing columns, but not by adding or removing rows). The list will be applied following the defined order.`}
+                placement="top"
+              >
+                <IconButton>
+                  <Help />
+                </IconButton>
+              </Tooltip>
+              <ConverterSelectorModal setConvertersToApply={setConvertersToApply} />
             </Grid>
-            <ConverterSelector setConvertersToApply={setConvertersToApply} />
             {/* Selected converters table */}
             <ConverterTable
               datasetId={datasetId}
