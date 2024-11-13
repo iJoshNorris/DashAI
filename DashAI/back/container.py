@@ -27,12 +27,12 @@ from DashAI.back.models import (
     DistilBertTransformer,
     DummyClassifier,
     HistGradientBoostingClassifier,
+    ImageGenerationModel,
     KNeighborsClassifier,
     LlamaModel,
     LogisticRegression,
     OpusMtEnESTransformer,
     RandomForestClassifier,
-    StableDiffusionModel,
     ViTTransformer,
 )
 from DashAI.back.optimizers import HyperOptOptimizer, OptunaOptimizer
@@ -64,8 +64,7 @@ INITIAL_COMPONENTS = [
     ViTTransformer,
     OpusMtEnESTransformer,
     BagOfWordsTextClassificationModel,
-    StableDiffusionModel,
-    LlamaModel,
+    ImageGenerationModel,
     # Dataloaders
     CSVDataLoader,
     JSONDataLoader,

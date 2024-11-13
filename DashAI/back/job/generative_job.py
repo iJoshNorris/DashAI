@@ -1,20 +1,14 @@
-import json
 import logging
-import os
-import pickle
-from io import BytesIO
-from pathlib import Path
-from typing import Any, Dict, Tuple
+from typing import Any
 
 from kink import inject
-from PIL import Image
 from sqlalchemy import exc
 from sqlalchemy.orm import Session
 
-from DashAI.back.dependencies.database.models import GenerativeProcess
+from DashAI.back.dependencies.database.models import GenerativeModel, GenerativeProcess
 from DashAI.back.dependencies.registry import ComponentRegistry
 from DashAI.back.job.base_job import BaseJob, JobError
-from DashAI.back.models import BaseModel
+from DashAI.back.models.base_generative_model import BaseGenerativeModel
 
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger(__name__)
@@ -55,24 +49,29 @@ class GenerativeJob(BaseJob):
             GenerativeProcess, generative_process_id
         )
 
-        model_class = component_registry[generative_process.model_name]["class"]
+        generative_model: GenerativeModel = db.get(
+            GenerativeModel, generative_process.model_id
+        )
+        print(generative_model.generative_model)
+
+        model_class = component_registry[generative_model.generative_model]["class"]
         params = generative_process.parameters
 
         try:
-            model: BaseModel = model_class(**params)
+            model: BaseGenerativeModel = model_class(**params)
         except TypeError as e:
             logging.error(e)
 
-        # {"num_inference_steps": 5, "guidance_scale": 6, "device": "cuda"}
+        print(model)
 
-        prompt = generative_process.input_data
+        input = generative_process.input_data
 
         # Start the generation process
         generative_process.set_status_as_started()
         db.commit()
 
         # Generate
-        out: Image.Image | str = model.generate(prompt)
+        out: Any = model.generate(input)
 
         # Process output and store it
         output_path: str = model.process_output(

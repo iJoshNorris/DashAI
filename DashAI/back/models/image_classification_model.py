@@ -1,7 +1,7 @@
-from DashAI.back.models.generative_model import GenerativeModel
+from DashAI.back.models.base_model import BaseModel
 
 
-class ImageClassificationModel(GenerativeModel):
+class ImageClassificationModel(BaseModel):
     """Class for models associated to ImageClassificationTask."""
 
     COMPATIBLE_COMPONENTS = ["ImageClassificationTask"]

@@ -4,7 +4,7 @@ from typing import Any
 from DashAI.back.models.base_model import BaseModel
 
 
-class GenerativeModel(BaseModel):
+class BaseGenerativeModel(BaseModel):
     @abstractmethod
     def process_output(self, out: Any, file_name: str, path: str) -> str:
         """Process the output of a generative model.

@@ -194,6 +194,16 @@ class LocalExplainer(Base):
         self.status = ExplainerStatus.ERROR
 
 
+class GenerativeModel(Base):
+    __tablename__ = "generative_model"
+    """
+    Table to store all the information about a generative model.
+    """
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String)
+    generative_model: Mapped[str] = mapped_column(String)
+
+
 class GenerativeProcess(Base):
     __tablename__ = "generative_process"
     """
@@ -207,7 +217,7 @@ class GenerativeProcess(Base):
         onupdate=datetime.now,
     )
     # model and parameters
-    model_name: Mapped[str] = mapped_column(String)
+    model_id: Mapped[int] = mapped_column(ForeignKey("generative_model.id"))
     parameters: Mapped[JSON] = mapped_column(JSON)
     # metadata
     name: Mapped[str] = mapped_column(String)
@@ -219,9 +229,8 @@ class GenerativeProcess(Base):
     start_time: Mapped[DateTime] = mapped_column(DateTime, nullable=True)
     end_time: Mapped[DateTime] = mapped_column(DateTime, nullable=True)
 
-    # input can be either a path or a string like a prompt
     input_data: Mapped[str] = mapped_column(String)
-    # output path can be of any extension
+    # output can be either a path or a string like a prompt
     output_path: Mapped[str] = mapped_column(String, nullable=True)
 
     def set_status_as_delivered(self) -> None:

@@ -1,6 +1,7 @@
 import logging
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from huggingface_hub import HfApi, hf_hub_url, model_info
 from kink import di
 from sqlalchemy import exc
 from sqlalchemy.orm import sessionmaker
@@ -8,7 +9,7 @@ from sqlalchemy.orm import sessionmaker
 from DashAI.back.api.api_v1.schemas.generative_process_params import (
     GenerativeProcessParams,
 )
-from DashAI.back.dependencies.database.models import GenerativeProcess
+from DashAI.back.dependencies.database.models import GenerativeModel, GenerativeProcess
 
 router = APIRouter()
 log = logging.getLogger(__name__)
@@ -40,10 +41,42 @@ async def upload_generative_process(
     HTTPException
         If there's an internal database error.
     """
+    hugging_face_api = HfApi()
+
     with session_factory() as db:
         try:
+            # Guardar modelo generativo en la base de datos (params.model_name) si
+            # es que no existe en la base de datos
+            # tiene que existir en la API de Hugging Face
+
+            # Attempt to fetch model information
+            model_information = hugging_face_api.model_info(params.model_name)
+            generative_task = model_information.pipeline_tag
+            task_to_model = {
+                "text-generation": "TextGenerationModel",
+                "text2text-generation": "TextGenerationModel",
+                "text-to-image": "ImageGenerationModel",
+            }
+
+            model = GenerativeModel(
+                name=params.model_name,
+                generative_model=task_to_model[generative_task],
+            )
+            db.add(model)
+            db.commit()
+            db.refresh(model)
+            model_id = model.id
+
+        except Exception:
+            # Falla pq el modelo generativo no existe
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Model does not exist or is not accessible.",
+            )
+
+        try:
             process = GenerativeProcess(
-                model_name=params.model_name,
+                model_id=model_id,
                 input_data=params.input_data,
                 parameters=params.parameters,
                 name=params.name,
