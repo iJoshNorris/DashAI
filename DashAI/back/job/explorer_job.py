@@ -2,7 +2,7 @@ import logging
 import os
 import pathlib
 
-from beartype.typing import Any, Dict, List, Type
+from beartype.typing import Any, Dict, Type
 from kink import inject
 from sqlalchemy import exc
 from sqlalchemy.orm import Session

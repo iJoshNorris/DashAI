@@ -134,8 +134,8 @@ function ConfigureExplorersStep({ onValidation = () => {} }) {
           if (tooltip) tooltip += "\n";
           tooltip += `This explorer requires at least \
             ${inputCardinality.min} valid ${
-            inputCardinality.min === 1 ? "column" : "columns"
-          }.`;
+              inputCardinality.min === 1 ? "column" : "columns"
+            }.`;
 
           if (validColumns.length < inputCardinality.min) disabled = true;
         }
@@ -144,8 +144,8 @@ function ConfigureExplorersStep({ onValidation = () => {} }) {
           if (tooltip) tooltip += "\n";
           tooltip += `This explorer requires at most \
             ${inputCardinality.max} valid ${
-            inputCardinality.max === 1 ? "column" : "columns"
-          }.`;
+              inputCardinality.max === 1 ? "column" : "columns"
+            }.`;
         }
       }
 
