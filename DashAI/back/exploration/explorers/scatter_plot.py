@@ -6,7 +6,14 @@ import plotly.express as px
 from beartype.typing import Any, Dict, List
 from plotly.graph_objs import Figure
 
-from DashAI.back.core.schema_fields import none_type, schema_field, string_field
+from DashAI.back.core.schema_fields import (
+    enum_field,
+    int_field,
+    none_type,
+    schema_field,
+    string_field,
+    union_type,
+)
 from DashAI.back.dataloaders.classes.dashai_dataset import (  # ClassLabel, Value,
     DashAIDataset,
     DatasetDict,
@@ -16,31 +23,41 @@ from DashAI.back.exploration.base_explorer import BaseExplorer, BaseExplorerSche
 
 
 class ScatterPlotSchema(BaseExplorerSchema):
-    """
-    ScatterPlotSchema is an explorer that returns a scatter plot \
-    of selected columns of a dataset.
-    """
-
-    color: schema_field(
-        none_type(string_field()),
+    color_group: schema_field(
+        none_type(union_type(string_field(), int_field(ge=0))),
         None,
-        ("The columnName to take for Class coloring."),
+        ("The columnName or columnIndex to take for grouping colored points."),
     )  # type: ignore
-    simbol: schema_field(
-        none_type(string_field()),
+    simbol_group: schema_field(
+        none_type(union_type(string_field(), int_field(ge=0))),
         None,
-        ("The columnName to take for symbol grouping."),
+        ("The columnName or columnIndex to take for grouping simbol of the points."),
     )  # type: ignore
-    size: schema_field(
-        none_type(string_field()),
+    point_size_from: schema_field(
+        enum_field(["column values", "fixed value"]),
+        "column values",
+        ("The source of the point size."),
+    )  # type: ignore
+    point_size: schema_field(
+        none_type(union_type(string_field(), int_field(ge=0))),
         None,
-        ("The columnName to take for size of the points."),
+        ("The columnName, columnIndex or value to take for the size of the points."),
     )  # type: ignore
 
 
 class ScatterPlotExplorer(BaseExplorer):
-    SCHEMA = ScatterPlotSchema
+    """
+    ScatterPlotExplorer is an explorer that returns a scatter plot
+    of selected columns of a dataset.
+    """
 
+    DISPLAY_NAME = "Scatter Plot"
+    DESCRIPTION = (
+        "ScatterPlotExplorer is an explorer that returns a scatter plot "
+        "of selected columns of a dataset."
+    )
+
+    SCHEMA = ScatterPlotSchema
     metadata: Dict[str, Any] = {
         "allowed_dtypes": ["*"],
         "restricted_dtypes": [],
@@ -48,38 +65,70 @@ class ScatterPlotExplorer(BaseExplorer):
     }
 
     def __init__(self, **kwargs) -> None:
-        self.color = kwargs.get("color")
-        self.simbol = kwargs.get("simbol")
-        self.size = kwargs.get("size")
+        self.color_column = kwargs.get("color_group")
+        self.simbol_column = kwargs.get("simbol_group")
+        self.point_size_from = kwargs.get("point_size_from")
+        self.point_size = kwargs.get("point_size")
         super().__init__(**kwargs)
 
     def prepare_dataset(
-        self, dataset_dict: DatasetDict, columns: List[str]
+        self, dataset_dict: DatasetDict, columns: List[Dict[str, Any]]
     ) -> DashAIDataset:
         split = list(dataset_dict.keys())[0]
+        explorer_columns = [col["columnName"] for col in columns]
         dataset_columns = dataset_dict[split].column_names
 
-        colorColumn = self.kwargs.get("color")
-        if colorColumn and colorColumn in dataset_columns:
-            columns.append(colorColumn)
-        simbolColumn = self.kwargs.get("simbol")
-        if simbolColumn and simbolColumn in dataset_columns:
-            columns.append(simbolColumn)
-        sizeColumn = self.kwargs.get("size")
-        if sizeColumn and sizeColumn in dataset_columns:
-            columns.append(sizeColumn)
+        if self.color_column is not None:
+            if isinstance(self.color_column, int):
+                idx = self.color_column
+                col = dataset_columns[idx]
+                if col not in explorer_columns:
+                    columns.append({"id": idx, "columnName": col})
+            else:
+                col = self.color_column
+                if col not in explorer_columns:
+                    columns.append({"columnName": col})
+            self.color_column = col
 
-        columns = list(set(columns))
-        print(columns)
+        if self.simbol_column is not None:
+            if isinstance(self.simbol_column, int):
+                idx = self.simbol_column
+                col = dataset_columns[idx]
+                if col not in explorer_columns:
+                    columns.append({"id": idx, "columnName": col})
+            else:
+                col = self.simbol_column
+                if col not in explorer_columns:
+                    columns.append({"columnName": col})
+            self.simbol_column = col
+
+        if self.point_size is not None:
+            if self.point_size_from == "column values":
+                if isinstance(self.point_size, (int, float)):
+                    idx = self.point_size
+                    col = dataset_columns[idx]
+                    if col not in explorer_columns:
+                        columns.append({"id": idx, "columnName": col})
+                else:
+                    col = self.point_size
+                    if col not in explorer_columns:
+                        columns.append({"columnName": col})
+                self.point_size = col
+            elif self.point_size_from == "fixed value":
+                self.point_size = int(self.point_size)
+
         return super().prepare_dataset(dataset_dict, columns)
 
     def launch_exploration(self, dataset: DashAIDataset, explorer_info: Explorer):
         _df = dataset.to_pandas()
         cols = [col["columnName"] for col in explorer_info.columns]
 
-        colorColumn = self.color if self.color in _df.columns else None
-        simbolColumn = self.simbol if self.simbol in _df.columns else None
-        sizeColumn = self.size if self.size in _df.columns else None
+        colorColumn = self.color_column if self.color_column in _df.columns else None
+        simbolColumn = self.simbol_column if self.simbol_column in _df.columns else None
+        if self.point_size_from == "column values" and self.point_size is not None:
+            pointSize = self.point_size if self.point_size in _df.columns else None
+        else:
+            pointSize = None
 
         fig = px.scatter(
             _df,
@@ -87,23 +136,29 @@ class ScatterPlotExplorer(BaseExplorer):
             y=cols[1],
             color=colorColumn,
             symbol=simbolColumn,
-            size=sizeColumn,
+            size=pointSize,
             title=f"Scatter Plot of {cols[0]} vs {cols[1]}",
         )
+
+        if self.point_size_from == "fixed value" and self.point_size is not None:
+            fig.update_traces(marker={"size": self.point_size})
+
+        if explorer_info.name is not None and explorer_info.name != "":
+            fig.update_layout(title=f"{explorer_info.name}")
 
         return fig
 
     def save_exploration(
         self,
-        exploration_info: Exploration,
+        __exploration_info__: Exploration,
         explorer_info: Explorer,
         save_path: str,
         result: Figure,
     ) -> str:
         if explorer_info.name is None or explorer_info.name == "":
-            filename = f"{exploration_info.id}_{explorer_info.id}.pickle"
+            filename = f"{explorer_info.id}.pickle"
         else:
-            filename = f"{explorer_info.name}_{explorer_info.id}.pickle"
+            filename = f"{explorer_info.id}_{explorer_info.name}.pickle"
         path = pathlib.Path(os.path.join(save_path, filename))
 
         with open(path, "wb") as f:

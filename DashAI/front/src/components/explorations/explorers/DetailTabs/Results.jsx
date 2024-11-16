@@ -82,15 +82,17 @@ const getDataFromOrientation = (data, orientation) => {
         return {
           field: column,
           headerName: column,
-          width: 150,
           renderCell: (params) => {
             if (params.value === null) {
               return <NullCell />;
             } else if (typeof params.value === "object") {
+              const tooltip = JSON.stringify(params.value);
               return (
-                <Typography variant="body2" color="text.secondary">
-                  {JSON.stringify(params.value)}
-                </Typography>
+                <Tooltip title={tooltip} arrow followCursor>
+                  <Typography variant="body2" color="text.secondary">
+                    {JSON.stringify(params.value)}
+                  </Typography>
+                </Tooltip>
               );
             } else if (
               params.value !== "" &&
@@ -100,12 +102,17 @@ const getDataFromOrientation = (data, orientation) => {
               const tooltip = params.value;
               const display = parseFloat(params.value).toFixed(2);
               return (
-                <Tooltip title={tooltip}>
+                <Tooltip title={tooltip} arrow>
                   <Typography variant="body2">{display}</Typography>
                 </Tooltip>
               );
             }
-            return <Typography variant="body2">{params.value}</Typography>;
+            const tooltip = params.value;
+            return (
+              <Tooltip title={tooltip} arrow followCursor>
+                <Typography variant="body2">{params.value}</Typography>
+              </Tooltip>
+            );
           },
         };
       }),

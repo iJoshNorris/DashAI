@@ -20,6 +20,10 @@ import { useSnackbar } from "notistack";
 
 const columns = [
   {
+    field: "id",
+    headerName: "Index",
+  },
+  {
     field: "columnName",
     headerName: "Column Name",
     flex: 1,

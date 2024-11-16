@@ -20,11 +20,6 @@ from DashAI.back.exploration.base_explorer import BaseExplorer, BaseExplorerSche
 
 
 class WordcloudSchema(BaseExplorerSchema):
-    """
-    WordcloudSchema is an explorer that returns a wordcloud \
-    of selected columns of a dataset.
-    """
-
     max_words: schema_field(
         t=int_field(gt=0),
         placeholder=200,
@@ -41,8 +36,21 @@ class WordcloudSchema(BaseExplorerSchema):
 
 
 class WordcloudExplorer(BaseExplorer):
-    SCHEMA = WordcloudSchema
+    """
+    WordcloudExplorer is an explorer that generates a wordcloud
+    from the concatenated strings of all selected columns in the dataset.
+    """
 
+    DISPLAY_NAME = "Word Cloud"
+    DESCRIPTION = (
+        "A wordcloud is a visual representation of text data, "
+        "where the size of each word indicates its frequency in the text."
+        "\n"
+        "This explorer generates a wordcloud from the concatenated "
+        "strings of all selected columns in the dataset."
+    )
+
+    SCHEMA = WordcloudSchema
     metadata: Dict[str, Any] = {
         "allowed_dtypes": ["string"],
         "restricted_dtypes": [],
@@ -68,22 +76,22 @@ class WordcloudExplorer(BaseExplorer):
             background_color=self.background_color,
             mode="RGBA" if self.background_color is None else "RGB",
             width=800,
-            height=400,
+            height=600,
         ).generate(text)
 
         return wordcloud.to_image()
 
     def save_exploration(
         self,
-        exploration_info: Exploration,
+        __exploration_info__: Exploration,
         explorer_info: Explorer,
         save_path: str,
         result: Image,
     ) -> str:
         if explorer_info.name is None or explorer_info.name == "":
-            filename = f"{exploration_info.id}_{explorer_info.id}."
+            filename = f"{explorer_info.id}."
         else:
-            filename = f"{explorer_info.name}_{explorer_info.id}."
+            filename = f"{explorer_info.id}_{explorer_info.name}."
         filename += "png"
 
         path = pathlib.Path(os.path.join(save_path, filename))

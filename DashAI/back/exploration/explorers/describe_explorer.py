@@ -19,14 +19,9 @@ from DashAI.back.exploration.base_explorer import BaseExplorer, BaseExplorerSche
 
 
 class DescribeExplorerSchema(BaseExplorerSchema):
-    """
-    DescribeExplorerSchema is an explorer that returns the descriptive \
-    statistics of a dataset.
-    """
-
     percentiles: schema_field(
         none_type(string_field()),
-        None,
+        "25, 50, 75",
         (
             "The percentiles to include in the exploration. "
             "Must be a list of integers between 0 and 100.\n"
@@ -35,7 +30,7 @@ class DescribeExplorerSchema(BaseExplorerSchema):
     )  # type: ignore
     include: schema_field(
         none_type(enum_field(["all", "number", "object", "category", "datetime"])),
-        None,
+        "all",
         ("The data types to include in the exploration.\n"),
     )  # type: ignore
     exclude: schema_field(
@@ -46,8 +41,28 @@ class DescribeExplorerSchema(BaseExplorerSchema):
 
 
 class DescribeExplorer(BaseExplorer):
-    SCHEMA = DescribeExplorerSchema
+    """
+    DescribeExplorer is an explorer that uses the pandas describe method to
+    describe the dataset. It returns a tabular representation of the dataset
+    with the count, mean, std, min, 25%, 50%, 75%, and max values for numeric
+    columns and count, unique, top, and freq values for object columns.
 
+    The user can specify the percentiles to include in the exploration and the
+    data types to include or exclude.
+    """
+
+    DISPLAY_NAME = "Describe Dataset"
+    DESCRIPTION = (
+        "DescribeExplorer is an explorer that describes the dataset. It returns"
+        " a tabular representation of the dataset with the count, mean, std, min,"
+        " 25%, 50%, 75%, and max values for numeric columns and count, unique,"
+        " top, and freq values for object columns."
+        "\n"
+        "The user can specify the percentiles to include in the exploration and"
+        " the data types to include or exclude."
+    )
+
+    SCHEMA = DescribeExplorerSchema
     metadata: Dict[str, Any] = {
         "allowed_dtypes": ["*"],
         "restricted_dtypes": [],
@@ -108,15 +123,15 @@ class DescribeExplorer(BaseExplorer):
 
     def save_exploration(
         self,
-        exploration_info: Exploration,
+        __exploration_info__: Exploration,
         explorer_info: Explorer,
         save_path: str,
         result: pd.DataFrame,
     ) -> str:
         if explorer_info.name is None or explorer_info.name == "":
-            filename = f"{exploration_info.id}_{explorer_info.id}.json"
+            filename = f"{explorer_info.id}.json"
         else:
-            filename = f"{explorer_info.name}_{explorer_info.id}.json"
+            filename = f"{explorer_info.id}_{explorer_info.name}.json"
         path = pathlib.Path(os.path.join(save_path, filename))
 
         result.to_json(path)

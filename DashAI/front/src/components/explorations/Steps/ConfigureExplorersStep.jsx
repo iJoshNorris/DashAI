@@ -40,7 +40,7 @@ const renderOption = (props, option, _, ownerState) => {
           variant="inherit"
           sx={{ whiteSpace: "pre-line" }}
         >
-          {option.reason}
+          {option.tooltip}
         </Typography>
       }
       placement="right"
@@ -92,7 +92,12 @@ function ConfigureExplorersStep({ onValidation = () => {} }) {
       const restrictedDtypes = explorer.metadata.restricted_dtypes;
       const inputCardinality = explorer.metadata.input_cardinality;
       let disabled = false;
-      let reason = "";
+      let tooltip = "";
+
+      if (explorer.description) {
+        tooltip += explorer.description;
+        tooltip += `\n`;
+      }
 
       let validColumns = datasetColumns;
       // check the valid dataset columns for the explorer
@@ -118,58 +123,64 @@ function ConfigureExplorersStep({ onValidation = () => {} }) {
         inputCardinality.exact != undefined &&
         inputCardinality.exact != null
       ) {
-        if (validColumns.length < inputCardinality.exact) disabled = true;
-
-        reason += `This explorer requires exactly \
+        if (tooltip) tooltip += "\n";
+        tooltip += `This explorer requires exactly \
         ${inputCardinality.exact} valid ${
           inputCardinality.exact === 1 ? "column" : "columns"
         }.`;
+        if (validColumns.length < inputCardinality.exact) disabled = true;
       } else {
         if (inputCardinality.min != undefined && inputCardinality.min != null) {
-          if (validColumns.length < inputCardinality.min) disabled = true;
-
-          reason += `This explorer requires at least \
+          if (tooltip) tooltip += "\n";
+          tooltip += `This explorer requires at least \
             ${inputCardinality.min} valid ${
-              inputCardinality.min === 1 ? "column" : "columns"
-            }.`;
+            inputCardinality.min === 1 ? "column" : "columns"
+          }.`;
+
+          if (validColumns.length < inputCardinality.min) disabled = true;
         }
 
         if (inputCardinality.max != undefined && inputCardinality.max != null) {
-          if (reason) reason += "\n";
-          reason += `This explorer requires at most \
+          if (tooltip) tooltip += "\n";
+          tooltip += `This explorer requires at most \
             ${inputCardinality.max} valid ${
-              inputCardinality.max === 1 ? "column" : "columns"
-            }.`;
+            inputCardinality.max === 1 ? "column" : "columns"
+          }.`;
         }
       }
 
-      if (validColumns.length > 0) {
-        reason += `\n\n\
-          The dataset has the following valid columns: \n\
-          ${validColumns
-            .map((col) => ` - ${col.columnName}: ${col.dataType}`)
-            .join("\n")}`;
-      }
-
       if (!allowedDtypes.includes("*")) {
-        reason += `\n\n\
+        tooltip += `\n\n\
           This explorer only accepts columns with data types: \n\
           ${allowedDtypes.map((dtype) => ` - ${dtype}`).join("\n")}`;
       }
 
       if (restrictedDtypes.length > 0) {
-        reason += `\n\n\
+        tooltip += `\n\n\
           This explorer does NOT accept columns with data types: \n\
           ${restrictedDtypes.map((dtype) => ` - ${dtype}`).join("\n")}`;
       }
 
+      if (validColumns.length > 0) {
+        tooltip += `\n\n\
+          The dataset has the following valid columns: \n\
+          ${validColumns
+            .map((col) => ` - ${col.columnName}: ${col.dataType}`)
+            .join("\n")}`;
+      } else {
+        tooltip += `\n\n\
+          The dataset does not have any valid columns for this explorer.`;
+      }
+
+      let label = explorer.metadata.display_name;
       return {
         id: index,
-        label: explorer.name,
+        label: label,
+        type: explorer.name,
         value: explorer,
         validColumns,
         disabled,
-        reason,
+        tooltip: tooltip,
       };
     });
 

@@ -66,8 +66,20 @@ function ExplorersTable({ explorerTypes = [] }) {
         flex: 1,
       },
       {
+        field: "label",
+        headerName: "Type",
+        minWidth: 200,
+        flex: 1,
+        valueGetter: (params) => {
+          const explorerType = explorerTypes.find(
+            (explorer) => explorer.type === params.row.exploration_type,
+          );
+          return explorerType.label;
+        },
+      },
+      {
         field: "exploration_type",
-        headerName: "explorer Type",
+        headerName: "Component Name",
         minWidth: 200,
         flex: 1,
       },
@@ -84,7 +96,7 @@ function ExplorersTable({ explorerTypes = [] }) {
             updateValue={handleUpdateColumns(params.id)}
             initialValues={params.row.columns}
             explorerType={explorerTypes.find(
-              (explorer) => explorer.label === params.row.exploration_type,
+              (explorer) => explorer.type === params.row.exploration_type,
             )}
           />,
 
@@ -141,6 +153,11 @@ function ExplorersTable({ explorerTypes = [] }) {
           pagination: {
             paginationModel: {
               pageSize: 5,
+            },
+          },
+          columns: {
+            columnVisibilityModel: {
+              exploration_type: false,
             },
           },
         }}

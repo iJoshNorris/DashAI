@@ -14,11 +14,6 @@ from DashAI.back.exploration.base_explorer import BaseExplorer, BaseExplorerSche
 
 
 class RowExplorerSchema(BaseExplorerSchema):
-    """
-    WordcloudSchema is an explorer that returns a wordcloud \
-    of selected columns of a dataset.
-    """
-
     row_ammount: schema_field(
         t=int_field(gt=0),
         placeholder=50,
@@ -26,7 +21,7 @@ class RowExplorerSchema(BaseExplorerSchema):
     )  # type: ignore
     shuffle: schema_field(
         t=bool_field(),
-        placeholder=True,
+        placeholder=False,
         description="Shuffle the rows at exploration time.",
     )  # type: ignore
     from_top: schema_field(
@@ -39,8 +34,20 @@ class RowExplorerSchema(BaseExplorerSchema):
 
 
 class RowExplorer(BaseExplorer):
-    SCHEMA = RowExplorerSchema
+    """
+    RowExplorer is an explorer that takes a number of rows from the dataset to
+    display them on tabular format. It can take the rows from the top or the
+    bottom of the dataset and shuffle them if needed.
+    """
 
+    DISPLAY_NAME = "Show Rows"
+    DESCRIPTION = (
+        "RowExplorer is an explorer that takes a number of rows from the dataset to "
+        "display them on tabular format. It can take the rows from the top or the "
+        "bottom of the dataset and shuffle them if needed."
+    )
+
+    SCHEMA = RowExplorerSchema
     metadata: Dict[str, Any] = {
         "allowed_dtypes": ["*"],
         "restricted_dtypes": [],
@@ -53,7 +60,7 @@ class RowExplorer(BaseExplorer):
         self.from_top = kwargs.get("from_top", True)
         super().__init__(**kwargs)
 
-    def launch_exploration(self, dataset: DashAIDataset, explorer_info: Explorer):
+    def launch_exploration(self, dataset: DashAIDataset, __explorer_info__: Explorer):
         _df = dataset.to_pandas()
 
         # Shuffle rows
@@ -70,15 +77,15 @@ class RowExplorer(BaseExplorer):
 
     def save_exploration(
         self,
-        exploration_info: Exploration,
+        __exploration_info__: Exploration,
         explorer_info: Explorer,
         save_path: str,
         result: pd.DataFrame,
     ) -> str:
         if explorer_info.name is None or explorer_info.name == "":
-            filename = f"{exploration_info.id}_{explorer_info.id}.json"
+            filename = f"{explorer_info.id}.json"
         else:
-            filename = f"{explorer_info.name}_{explorer_info.id}.json"
+            filename = f"{explorer_info.id}_{explorer_info.name}.json"
         path = pathlib.Path(os.path.join(save_path, filename))
 
         result.to_json(path)

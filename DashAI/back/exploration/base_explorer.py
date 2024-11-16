@@ -28,18 +28,28 @@ class BaseExplorer(ConfigObject, ABC):
     Use this class as reference to create new explorers.
 
     To create a new explorer, you must:
-    - Create a new class that extends BaseExplorer.
-    - Create a new schema that extends BaseExplorerSchema and
-        replaces the SCHEMA attribute.
-    - Implement the launch_exploration method.
-    - Implement the save_exploration method.
-    - Implement the get_results method.
-    - (Optional) Implement the validate_parameters method.
+    - Create a new schema that extends `BaseExplorerSchema`.
+    - Create a new class that extends `BaseExplorer` and assign the
+        previous schema to the `SCHEMA` attribute.
+    - Implement the `launch_exploration` method.
+    - Implement the `save_exploration` method.
+    - Implement the `get_results` method.
+
+    You can also optionally:
+    - Implement the `validate_parameters` method if you want to validate
+        the parameters in a custom way before creating/updating the database record.
+    - Implement the `prepare_dataset` method if you want to prepare the
+        dataset in a custom way before launching the exploration.
+    - Add a display name to the `DISPLAY_NAME` attribute to show a custom
+        name in the frontend.
+    - Add a description to the `DESCRIPTION` attribute to show a custom
+        description in the frontend.
     """
 
     TYPE: Final[str] = "Explorer"
+    DISPLAY_NAME: Final[str] = ""
+    DESCRIPTION: Final[str] = ""
     SCHEMA: BaseExplorerSchema
-
     metadata: Dict[str, Any] = {}
 
     def __init__(self, **kwargs) -> None:
@@ -57,6 +67,9 @@ class BaseExplorer(ConfigObject, ABC):
             the explorer columns.
         """
         metadata = cls.metadata
+        metadata["display_name"] = (
+            cls.DISPLAY_NAME if cls.DISPLAY_NAME else cls.__name__
+        )
         # Set default values if not present
         if metadata.get("allowed_dtypes", None) is None:
             metadata["allowed_dtypes"] = ["*"]
@@ -84,7 +97,7 @@ class BaseExplorer(ConfigObject, ABC):
         return cls.SCHEMA.model_validate(params)
 
     def prepare_dataset(
-        self, dataset_dict: DatasetDict, columns: List[str]
+        self, dataset_dict: DatasetDict, columns: List[Dict[str, Any]]
     ) -> DashAIDataset:
         """
         Prepare the dataset for the exploration.
@@ -94,8 +107,17 @@ class BaseExplorer(ConfigObject, ABC):
         dataset : DatasetDict
             The dataset to prepare.
 
-        columns : list[str]
-            The columns to select from the dataset.
+        columns : list[Dict[str, Any]]
+            The columns to select from the dataset, each column is a dictionary
+            with the following keys:
+
+            [Required]
+            - columnName: The name of the column.
+
+            [Optional]
+            - id: The id or index of the column.
+            - valueType: The type of the column.
+            - dataType: The data type of the column.
 
         Returns
         -------
@@ -103,7 +125,8 @@ class BaseExplorer(ConfigObject, ABC):
             The prepared dataset.
         """
         # Select the columns
-        dataset_dict = select_columns(dataset_dict, columns, [])[0]
+        columnNames = list({col["columnName"] for col in columns})
+        dataset_dict = select_columns(dataset_dict, columnNames, [])[0]
         dataset_dict = concatenate_datasets(
             [dataset_dict[split] for split in dataset_dict]
         )

@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 
 import { useExplorationsContext, contextDefaults } from "./context";
 import { ExplorerStatus } from "../../types/explorer";
+import { getComponents } from "../../api/component";
 
 import { Paper } from "@mui/material";
 import { Info as DetailsIcon } from "@mui/icons-material";
@@ -25,6 +26,17 @@ function ResultsByExplorer({
 }) {
   const { explorationData, setExplorerData } = useExplorationsContext();
   const { explorers } = explorationData;
+
+  const [explorerTypes, setExplorerTypes] = useState([]);
+  const getExplorerTypes = () => {
+    // fetch explorer types
+    getComponents({ selectTypes: ["Explorer"] }).then((data) => {
+      setExplorerTypes(data);
+    });
+  };
+  useEffect(() => {
+    getExplorerTypes();
+  }, [explorers]);
 
   const [rows, setRows] = useState([]);
   const [showExplorerDetails, setShowExplorerDetails] = useState(false);
@@ -70,8 +82,19 @@ function ResultsByExplorer({
         minWidth: 200,
       },
       {
-        field: "exploration_type",
+        field: "type_display_name",
         headerName: "Type",
+        minWidth: 200,
+        valueGetter: (params) => {
+          const explorerType = explorerTypes.find(
+            (explorer) => explorer.name === params.row.exploration_type,
+          );
+          return explorerType?.metadata.display_name;
+        },
+      },
+      {
+        field: "exploration_type",
+        headerName: "Component Name",
         minWidth: 200,
       },
       {
@@ -88,7 +111,7 @@ function ResultsByExplorer({
         },
       },
     ];
-  }, [setExplorerData]);
+  }, [handleShowExplorerDetails, explorerTypes]);
 
   return (
     <React.Fragment>
@@ -139,6 +162,7 @@ function ResultsByExplorer({
             },
             columns: {
               columnVisibilityModel: {
+                exploration_type: false,
                 status: false,
               },
             },

@@ -124,10 +124,8 @@ class ExplorerJob(BaseJob):
 
         # prepare the dataset
         try:
-            cols: List[Dict[str, Any]] = explorer_info.columns
-            explorer_columns = [cols["columnName"] for cols in cols]
             prepared_dataset = explorer_instance.prepare_dataset(
-                dataset_dict, explorer_columns
+                dataset_dict, explorer_info.columns
             )
         except Exception as e:
             log.exception(e)
@@ -159,7 +157,7 @@ class ExplorerJob(BaseJob):
             save_path = pathlib.Path(
                 os.path.join(
                     config["EXPLORATIONS_PATH"],
-                    f"{exploration_info.name}/",
+                    f"{exploration_info.id}_{os.path.normpath(exploration_info.name)}/",
                 )
             )
             if not save_path.exists():

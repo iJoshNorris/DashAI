@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import PropTypes from "prop-types";
 
 import { Box, ButtonGroup, Paper, Typography } from "@mui/material";
@@ -12,6 +12,7 @@ import {
 import { LoadingButton } from "@mui/lab";
 import { useSnackbar } from "notistack";
 
+import { getComponents } from "../../api/component";
 import { ExplorerStatus } from "../../types/explorer";
 import { getExplorersByExplorationId as getExplorersRequest } from "../../api/explorer";
 import { useExplorationsContext } from "./context";
@@ -21,36 +22,6 @@ import {
   startJobQueue as startJobQueueRequest,
 } from "../../api/job";
 import { formatDate } from "../../utils";
-
-const columns = [
-  {
-    field: "name",
-    headerName: "Name",
-    flex: 1,
-  },
-  {
-    field: "exploration_type",
-    headerName: "Exploration Type",
-    flex: 1,
-  },
-  {
-    field: "status",
-    headerName: "Status Value",
-    flex: 1,
-  },
-  {
-    field: "status_display",
-    headerName: "Status",
-    flex: 1,
-    valueGetter: (params) => ExplorerStatus[params.row.status],
-  },
-  {
-    field: "last_modified",
-    headerName: "Last Modified",
-    flex: 1,
-    valueFormatter: (params) => formatDate(params.value),
-  },
-];
 
 /**
  * Component to run explorers from an exploration. It uses context to get the exploration data.
@@ -71,6 +42,17 @@ function ExplorationRunner({
   const [rowSelectionModel, setRowSelectionModel] = useState(
     explorers.map((explorer) => explorer.id),
   ); // Select all explorers by default
+
+  const [explorerTypes, setExplorerTypes] = useState([]);
+  const getExplorerTypes = () => {
+    // fetch explorer types
+    getComponents({ selectTypes: ["Explorer"] }).then((data) => {
+      setExplorerTypes(data);
+    });
+  };
+  useEffect(() => {
+    getExplorerTypes();
+  }, [explorers]);
 
   const [running, setRunning] = useState(false);
   const [finishedRunning, setFinishedRunning] = useState(false);
@@ -148,6 +130,54 @@ function ExplorationRunner({
     }
   }, [running, updateFlag]);
 
+  const columns = useMemo(
+    () => [
+      {
+        field: "id",
+        headerName: "ID",
+      },
+      {
+        field: "name",
+        headerName: "Name",
+        flex: 1,
+      },
+      {
+        field: "type_display_name",
+        headerName: "Type",
+        minWidth: 200,
+        valueGetter: (params) => {
+          const explorerType = explorerTypes.find(
+            (explorer) => explorer.name === params.row.exploration_type,
+          );
+          return explorerType?.metadata.display_name;
+        },
+      },
+      {
+        field: "exploration_type",
+        headerName: "Component Name",
+        flex: 1,
+      },
+      {
+        field: "status",
+        headerName: "Status Value",
+        flex: 1,
+      },
+      {
+        field: "status_display",
+        headerName: "Status",
+        flex: 1,
+        valueGetter: (params) => ExplorerStatus[params.row.status],
+      },
+      {
+        field: "last_modified",
+        headerName: "Last Modified",
+        flex: 1,
+        valueFormatter: (params) => formatDate(params.value),
+      },
+    ],
+    [explorerTypes],
+  );
+
   return (
     <Box
       sx={{
@@ -187,6 +217,8 @@ function ExplorationRunner({
             },
             columns: {
               columnVisibilityModel: {
+                id: false,
+                exploration_type: false,
                 status: false,
               },
             },
