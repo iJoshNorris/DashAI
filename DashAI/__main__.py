@@ -34,7 +34,7 @@ def main(
                 "Only in DEBUG mode, SQLAlchemy logging is enabled."
             )
         ),
-    ] = LoggingLevel.INFO,
+    ] = LoggingLevel.WARN,
 ) -> None:
     """Main function for DashAI package.
 

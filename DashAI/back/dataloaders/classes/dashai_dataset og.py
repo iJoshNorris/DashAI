@@ -15,18 +15,9 @@ from datasets import (
     Value,
     concatenate_datasets,
     load_from_disk,
-    Features,
-
 )
-
-from datasets.arrow_dataset import update_metadata_with_features
-
 from datasets.table import Table
 from sklearn.model_selection import train_test_split
-
-from DashAI.back.types.dashai_value import DashAIValue
-from DashAI.back.types.categorical import Categorical, to_dashai_categorical
-from DashAI.back.types.value_types import VALUES_DICT, Integer, Float, Text, Time, Boolean, Timestamp, Date, Duration, Decimal, Binary, to_dashai_value
 
 
 class DashAIDataset(Dataset):
@@ -47,52 +38,6 @@ class DashAIDataset(Dataset):
             Arrow table from which the dataset will be created
         """
         super().__init__(table, *args, **kwargs)
-    
-    @property
-    def features(self) -> Features:
-        features = super().features
-        if features is None:  # this is already checked in __init__
-            raise ValueError("Features can't be None in a Dataset object")
-        return features
-    
-    @features.setter
-    def features(self, features: Features) -> None:
-        """Set the features of the dataset.
-
-        Parameters
-        ----------
-        features : Features
-            The features of the dataset. This should be a dictionary-like object
-            The features of the dataset.
-        """
-        self._info.features = features
-        self.__dict__.update({"features": features})
-        self._features = features
-    
-    def transform_features(self) -> "DashAIDataset":
-        """Transform the features of the dataset to DashAIValue.
-
-        Returns
-        -------
-        DashAIDataset
-            The dataset with the features transformed.
-        """
-        new_features = {}
-
-        for column in self.features:
-            if self.features[column]._type == "Value":
-                new_features[column] = to_dashai_value(self.features[column])#Transformación se hace
-            elif self.features[column]._type == "ClassLabel":
-                new_features[column] = to_dashai_categorical(ClassLabel(self.features[column]))
-            else:
-                print(f"Error al convertir: {self.features[column]}, no se que pasó")
-
-        self.features = Features(new_features)
-
-        #print("Resultado final para self.features:", self.features)
-        #print("Resultado final para Features(new_features):", Features(new_features))
-        
-        return self
 
     @beartype
     def cast(self, *args, **kwargs) -> "DashAIDataset":
@@ -149,16 +94,13 @@ class DashAIDataset(Dataset):
                 )
         new_features = self.features.copy()
         for column in column_types:
-            print("column_types[column]", column_types[column])
-            if column_types[column] == "Categorical" or isinstance(column_types[column], Categorical):
+            print("column:", column)
+            if column_types[column] == "Categorical":
                 names = list(set(self[column]))
-                new_features[column] = to_dashai_categorical(ClassLabel(names=names))
-            elif column_types[column] == "Numerical" or isinstance(column_types[column], Float) or isinstance(column_types[column], Integer):
-                new_features[column] = to_dashai_value(Value("float32"))
-        dataset = self.transform_features()
-
-        ##Should check this method because I'm not finally sure if I understand it, at least with the new features
-
+                new_features[column] = ClassLabel(names=names)
+            elif column_types[column] == "Numerical":
+                new_features[column] = Value("float32")
+        dataset = self.cast(new_features)
         return dataset
 
     @beartype
@@ -232,7 +174,6 @@ class DashAIDataset(Dataset):
         return sample
 
 
-
 @beartype
 def load_dataset(dataset_path: str) -> DatasetDict:
     """Load a DashAI dataset from its path.
@@ -253,7 +194,7 @@ def load_dataset(dataset_path: str) -> DatasetDict:
 
     for split in dataset:
         dataset[split] = DashAIDataset(dataset[split].data)
-        dataset[split] = DashAIDataset(dataset[split].data).transform_features()
+
     return dataset
 
 
@@ -448,7 +389,6 @@ def to_dashai_dataset(dataset: DatasetDict) -> DatasetDict:
     """
     for key in dataset:
         dataset[key] = DashAIDataset(dataset[key].data)
-        dataset[key] = DashAIDataset(dataset[key].data).transform_features()
     return dataset
 
 
@@ -569,31 +509,19 @@ def get_columns_spec(dataset_path: str) -> Dict[str, Dict]:
         Dict with the columns and types
     """
     dataset = load_dataset(dataset_path=dataset_path)
-    #print(dataset)
     dataset_features = dataset["train"].features
     column_types = {}
     for column in dataset_features:
-        val = None
-        try:
-            val = to_dashai_value(dataset_features[column])
-        except:
-            try:
-                val = to_dashai_categorical(dataset_features[column])
-            except:
-                pass
-        if dataset_features[column]._type == "Value" or isinstance(val, DashAIValue):
-            dataset_features[column] = val
+        if dataset_features[column]._type == "Value":
             column_types[column] = {
-                "type": str(dataset_features[column]),
+                "type": "Value",
                 "dtype": dataset_features[column].dtype,
             }
-        elif dataset_features[column]._type == "ClassLabel" or isinstance(val, Categorical):
-            dataset_features[column] = to_dashai_categorical(dataset_features[column])
+        elif dataset_features[column]._type == "ClassLabel":
             column_types[column] = {
-                "type": str(dataset_features[column]),
+                "type": "Classlabel",
                 "dtype": "",
             }
-        
     return column_types
 
 
@@ -619,23 +547,19 @@ def update_columns_spec(dataset_path: str, columns: Dict) -> DatasetDict:
     # load the dataset from where its stored
     dataset_dict = load_from_disk(dataset_path=dataset_path)
     for split in dataset_dict:
-        # copy the features with the columns and types
+        # copy the features with the columns ans types
         new_features = dataset_dict[split].features
         for column in columns:
             if columns[column].type == "ClassLabel":
                 names = list(set(dataset_dict[split][column]))
-                new_features[column] = to_dashai_categorical(ClassLabel(names=names))
+                new_features[column] = ClassLabel(names=names)
             elif columns[column].type == "Value":
-                new_features[column] = to_dashai_value(Value(columns[column].dtype))
-            else:
-                try:
-                    val = to_dashai_value(Value(columns[column].dtype))
-                    if isinstance(val, DashAIValue):
-                        new_features[column] = val
-                except ValueError as e:
-                    pass
+                new_features[column] = Value(columns[column].dtype)
+
+        # cast the column types with the changes
         try:
             dataset_dict[split] = dataset_dict[split].cast(new_features)
+
         except ValueError as e:
             raise ValueError("Error while trying to cast the columns") from e
     return dataset_dict

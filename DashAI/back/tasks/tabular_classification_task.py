@@ -1,7 +1,10 @@
 from typing import List
 
 from datasets import ClassLabel, DatasetDict, Value
-
+from DashAI.back.types.categorical import Categorical
+from DashAI.back.types.dashai_value import DashAIValue
+from DashAI.back.types.value_types import Integer, Float, Text, Time, Boolean, Timestamp, Date, Duration, Decimal, Binary
+from DashAI.back.dataloaders.classes.dashai_dataset import DashAIDataset
 from DashAI.back.tasks.base_task import BaseTask
 
 
@@ -17,8 +20,8 @@ class TabularClassificationTask(BaseTask):
     Models are trained to learn patterns and relationships in the data, enabling
     accurate classification of new instances."""
     metadata: dict = {
-        "inputs_types": [ClassLabel, Value],
-        "outputs_types": [ClassLabel],
+        "inputs_types": [Categorical, DashAIValue],
+        "outputs_types": [Categorical],
         "inputs_cardinality": "n",
         "outputs_cardinality": 1,
     }

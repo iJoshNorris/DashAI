@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from datasets import ClassLabel
 
-from DashAI.back.dataloaders.classes.dashai_dataset import DashAIDataset
+# from DashAI.back.dataloaders.classes.dashai_dataset import DashAIDataset
 from DashAI.back.types.dashai_data_type import DashAIDataType
 
 
@@ -61,30 +61,61 @@ class Categorical(ClassLabel, DashAIDataType):
         return Categorical(hf_feature.names)
 
 
-def class_encode_column(
-    dataset: DashAIDataset, column: str, include_nulls: bool = False
-) -> DashAIDataset:
-    """Create a copy of the given dataset with the given column encoded to a
-    categorical column with integer numbers.
+def to_dashai_categorical(hf_feature: ClassLabel) -> Categorical:
+    """Creates a categorical data type instance with the information of
+    the given Hugging Face feature `hf_feature`.
 
     Parameters
     ----------
-    dataset : DashAIDataset
-        Dataset with the column to encode.
-    column : str
-        Name of the column to encode.
-    include_nulls : bool, optional
-        Whether to include null values in the encoding. If `True`,
-        the null values will be encoded as the `"None"` class label.
+    hf_feature : ClassLabel
+        Hugging Face feature instance used to create a Categorical
+        instance.
 
     Returns
     -------
-    DashAIDataset
-        DashAI Dataset with the column encoded
+    DashAIDataType
+        _description_
+
+    Raises
+    ------
+    TypeError
+        Raises if `hf_feature` is not a ClassLabel instance.
     """
-    if column not in dataset.column_names:
-        raise ValueError(f"Column '{column}' is not in the dataset")
-    dt = dataset.class_encode_column(column, include_nulls)
-    feats = dt.features.copy()
-    feats[column] = Categorical(feats[column].names)
-    return DashAIDataset(dt.data).cast(feats)
+    if not isinstance(hf_feature, ClassLabel):
+        raise TypeError("hf_feature should be a ClassLabel instance")
+    
+    names = hf_feature.names
+
+    return Categorical(names=names)
+
+
+
+
+
+# def class_encode_column(
+#     dataset: DashAIDataset, column: str, include_nulls: bool = False
+# ) -> DashAIDataset:
+#     """Create a copy of the given dataset with the given column encoded to a
+#     categorical column with integer numbers.
+
+#     Parameters
+#     ----------
+#     dataset : DashAIDataset
+#         Dataset with the column to encode.
+#     column : str
+#         Name of the column to encode.
+#     include_nulls : bool, optional
+#         Whether to include null values in the encoding. If `True`,
+#         the null values will be encoded as the `"None"` class label.
+
+#     Returns
+#     -------
+#     DashAIDataset
+#         DashAI Dataset with the column encoded
+#     """
+#     if column not in dataset.column_names:
+#         raise ValueError(f"Column '{column}' is not in the dataset")
+#     dt = dataset.class_encode_column(column, include_nulls)
+#     feats = dt.features.copy()
+#     feats[column] = Categorical(feats[column].names)
+#     return DashAIDataset(dt.data).cast(feats)

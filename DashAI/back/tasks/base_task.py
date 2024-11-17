@@ -4,6 +4,7 @@ from typing import Any, Dict, Final, List
 from datasets import DatasetDict
 
 
+
 class BaseTask:
     """Base class for DashAI compatible tasks."""
 
@@ -54,6 +55,9 @@ class BaseTask:
         dataset_name : str
             Dataset name
         """
+        
+        #print("\n\n\n\n\ndataset:", dataset, "\n\n\n\n")
+        
         for split in dataset:
             metadata = self.metadata
             allowed_input_types = tuple(metadata["inputs_types"])
@@ -64,6 +68,9 @@ class BaseTask:
             # Check input types
             for input_col in input_columns:
                 input_col_type = dataset[split].features[input_col]
+
+                print("tipo input column:", input_col_type)
+                
                 if not isinstance(input_col_type, allowed_input_types):
                     raise TypeError(
                         f"Error in split {split} of dataset {dataset_name}. "
@@ -73,12 +80,17 @@ class BaseTask:
             # Check output types
             for output_col in output_columns:
                 output_col_type = dataset[split].features[output_col]
+                
+                print("tipo output column:", output_col_type)
+                
                 if not isinstance(output_col_type, allowed_output_types):
+                    
+                    
                     raise TypeError(
                         f"Error in split {split} of dataset {dataset_name}. "
                         f"{output_col_type} is not an allowed type for output columns."
                     )
-
+                    
             # Check input cardinality
             if inputs_cardinality != "n" and len(input_columns) != inputs_cardinality:
                 raise ValueError(

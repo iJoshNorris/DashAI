@@ -4,6 +4,9 @@ from datasets import Image
 
 from DashAI.back.types.dashai_data_type import DashAIDataType
 
+import numpy as np
+import PIL.Image
+from typing import Union
 
 @dataclass
 class DashAIImage(Image, DashAIDataType):
@@ -34,5 +37,7 @@ class DashAIImage(Image, DashAIDataType):
 
     Parameters
     Image : _type_
-        _description_
+        _description_ 
     """
+    
+            
