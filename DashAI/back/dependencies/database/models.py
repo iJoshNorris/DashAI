@@ -247,10 +247,10 @@ class GenerativeProcess(Base):
         self.status = RunStatus.ERROR
 
 
-class GenerativeProcess(Base):
+class GenerativeSession(Base):
     __tablename__ = "generative_process"
     """
-    Table to store all the information about a specific process of a generative model.
+    Table to store all the information about a specific session of a generative model.
     """
     id: Mapped[int] = mapped_column(primary_key=True)
     created: Mapped[DateTime] = mapped_column(DateTime, default=datetime.now)
