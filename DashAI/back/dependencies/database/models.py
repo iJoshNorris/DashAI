@@ -217,6 +217,7 @@ class GenerativeProcess(Base):
         onupdate=datetime.now,
     )
     # metadata
+    session_id: Mapped[int] = mapped_column(ForeignKey("generative_session.id"))
     status: Mapped[Enum] = mapped_column(
         Enum(RunStatus), nullable=False, default=RunStatus.NOT_STARTED
     )
@@ -248,7 +249,7 @@ class GenerativeProcess(Base):
 
 
 class GenerativeSession(Base):
-    __tablename__ = "generative_process"
+    __tablename__ = "generative_session"
     """
     Table to store all the information about a specific session of a generative model.
     """
