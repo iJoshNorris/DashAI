@@ -193,6 +193,7 @@ class LocalExplainer(Base):
         """Update the status of the local explainer to error."""
         self.status = ExplainerStatus.ERROR
 
+
 class GenerativeModel(Base):
     __tablename__ = "generative_model"
     """
@@ -201,6 +202,7 @@ class GenerativeModel(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String, unique=True, nullable=False)
     task_name: Mapped[str] = mapped_column(String, nullable=False)
+
 
 class GenerativeProcess(Base):
     __tablename__ = "generative_process"
@@ -243,6 +245,7 @@ class GenerativeProcess(Base):
     def set_status_as_error(self) -> None:
         """Update the status of the process to error."""
         self.status = RunStatus.ERROR
+
 
 class GenerativeProcess(Base):
     __tablename__ = "generative_process"
