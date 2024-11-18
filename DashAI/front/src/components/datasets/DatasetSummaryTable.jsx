@@ -7,7 +7,7 @@ import {
   getDatasetSample as getDatasetSampleRequest,
   getDatasetTypes as getDatasetTypesRequest,
 } from "../../api/datasets";
-import { dataTypesList, columnTypesList } from "../../utils/typesLists";
+import { dataTypesList, columnTypesList, imageTypesList } from "../../utils/typesLists";
 import SelectTypeCell from "../custom/SelectTypeCell";
 
 function DatasetSummaryTable({
@@ -15,6 +15,10 @@ function DatasetSummaryTable({
   isEditable,
   columnsSpec,
   setColumnsSpec,
+  newDataset,
+  setNewDataset,
+  selectedDataloader,
+  setSelectedDataloader,
 }) {
   const [loading, setLoading] = useState(true);
   const { enqueueSnackbar } = useSnackbar();
@@ -25,14 +29,22 @@ function DatasetSummaryTable({
     setLoading(true);
     try {
       const dataset = await getDatasetSampleRequest(datasetId);
-      const types = await getDatasetTypesRequest(datasetId);
+      const types = await getDatasetTypesRequest(datasetId);//revisareeeeee
+      console.log(types);
+      let datatype = null;
       const rowsArray = Object.keys(dataset).map((name, idx) => {
+        if (types[name].type === "Value" || types[name].type === "ClassLabel") {
+          datatype = types[name].dtype
+        }
+        else {
+          datatype = "Seleccionar tipo de input de imagen"
+        }
         return {
           id: idx,
           columnName: name,
           example: dataset[name][0],
           columnType: types[name].type,
-          dataType: types[name].dtype,
+          dataType: datatype,
         };
       });
       setRows(rowsArray);
@@ -69,6 +81,11 @@ function DatasetSummaryTable({
       updateColumns[columnName].dtype = newValue;
     } else if (field === "columnType") {
       updateColumns[columnName].type = newValue;
+
+      if (newValue === "Image") {
+        setNewDataset({ ...newDataset, dataloader: selectedDataloader.name })
+      }
+      
     }
 
     setColumnsSpec(updateColumns);
@@ -112,8 +129,10 @@ function DatasetSummaryTable({
     {
       field: "dataType",
       headerName: "Data type",
-      renderEditCell: (params) =>
-        isEditable && renderSelectCell(params, dataTypesList),
+      renderEditCell: (params) => {
+        const datatypes = params.row.columnType === "Value" ? dataTypesList : imageTypesList;
+        return isEditable && renderSelectCell(params, datatypes);
+      },
       minWidth: 200,
       editable: isEditable,
     },

@@ -13,6 +13,7 @@ from datasets import (
     Dataset,
     DatasetDict,
     Value,
+    Image,
     concatenate_datasets,
     load_from_disk,
 )
@@ -524,11 +525,17 @@ def get_columns_spec(dataset_path: str) -> Dict[str, Dict]:
                 "type": "Classlabel",
                 "dtype": "",
             }
+        elif dataset_features[column]._type == "Image":
+            column_types[column] = {
+                "type": "Image",
+                "dtype": "",
+            }
         else:
             column_types[column] = {
                 "type": "Other",
                 "dtype": "",
             }
+        print("Tipo de las columnas",column_types)
     return column_types
 
 
@@ -565,6 +572,8 @@ def update_columns_spec(dataset_path: str, columns: Dict) -> DatasetDict:
                 new_features[column] = ClassLabel(names=names)
             elif columns[column].type == "Value":
                 new_features[column] = Value(columns[column].dtype)
+            elif columns[column].type == "Image":
+                new_features[column] = Image()
             else:
                 pass
         # Cast the column types with the changes

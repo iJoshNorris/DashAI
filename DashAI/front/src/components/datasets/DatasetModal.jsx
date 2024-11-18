@@ -52,6 +52,8 @@ function DatasetModal({ open, setOpen, updateDatasets }) {
   const formSubmitRef = useRef(null);
   const { enqueueSnackbar } = useSnackbar();
 
+  const [selectedDataloader, setSelectedDataloader] = useState({});
+
   const handleSubmitNewDataset = async () => {
     try {
       const formData = new FormData();
@@ -188,6 +190,8 @@ function DatasetModal({ open, setOpen, updateDatasets }) {
             newDataset={newDataset}
             setNewDataset={setNewDataset}
             setNextEnabled={setNextEnabled}
+            selectedDataloader={selectedDataloader}
+            setSelectedDataloader={setSelectedDataloader}
           />
         )}
         {/* Step 2: Configure dataloader and upload file */}
@@ -207,6 +211,10 @@ function DatasetModal({ open, setOpen, updateDatasets }) {
             datasetUploaded={uploaded}
             columnsSpec={columnsSpec}
             setColumnsSpec={setColumnsSpec}
+            newDataset={newDataset}
+            setNewDataset={setNewDataset}
+            selectedDataloader={selectedDataloader}
+            setSelectedDataloader={setSelectedDataloader}
           />
         )}
       </DialogContent>

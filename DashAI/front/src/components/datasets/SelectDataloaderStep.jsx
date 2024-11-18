@@ -11,11 +11,10 @@ import { DialogContentText, Grid } from "@mui/material";
  * @param {function} setNewDataset function that modifies newDataset state
  * @param {function} setNextEnabled function to enable or disable the "Next" button in the dataset modal.
  */
-function SelectDataloaderStep({ newDataset, setNewDataset, setNextEnabled }) {
+function SelectDataloaderStep({ newDataset, setNewDataset, setNextEnabled, selectedDataloader, setSelectedDataloader }) {
   const { enqueueSnackbar } = useSnackbar();
 
   const [dataloaders, setDataloaders] = useState([]);
-  const [selectedDataloader, setSelectedDataloader] = useState({});
   const [loading, setLoading] = useState(true);
 
   async function getCompatibleDataloaders() {

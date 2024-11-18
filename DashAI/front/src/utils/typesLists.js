@@ -27,4 +27,6 @@ export const dataTypesList = [
   "large_string",
 ];
 
-export const columnTypesList = ["Value", "ClassLabel"];
+export const imageTypesList = ["Burro", "Shrek", "Fiona", "Lord Farquaad", "Gato con botas"];
+
+export const columnTypesList = ["Value", "ClassLabel", "Image"];

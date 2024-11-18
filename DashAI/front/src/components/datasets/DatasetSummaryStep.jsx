@@ -8,6 +8,10 @@ function DatasetSummaryStep({
   datasetUploaded,
   columnsSpec,
   setColumnsSpec,
+  newDataset,
+  setNewDataset,
+  selectedDataloader,
+  setSelectedDataloader,
 }) {
   useEffect(() => {
     if (datasetUploaded) {
@@ -39,6 +43,10 @@ function DatasetSummaryStep({
               isEditable={true}
               columnsSpec={columnsSpec}
               setColumnsSpec={setColumnsSpec}
+              newDataset={newDataset}
+              setNewDataset={setNewDataset}
+              selectedDataloader={selectedDataloader}
+              setSelectedDataloader={setSelectedDataloader}
             />
           ) : (
             <CircularProgress />
