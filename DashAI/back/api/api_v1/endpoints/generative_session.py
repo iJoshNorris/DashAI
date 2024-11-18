@@ -1,7 +1,6 @@
 import logging
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from huggingface_hub import HfApi, hf_hub_url, model_info
 from kink import di
 from sqlalchemy import exc
 from sqlalchemy.orm import sessionmaker
