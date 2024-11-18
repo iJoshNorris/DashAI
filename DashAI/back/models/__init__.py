@@ -1,4 +1,5 @@
 # flake8: noqa
+from DashAI.back.models.base_generative_model import BaseGenerativeModel
 from DashAI.back.models.base_model import BaseModel
 from DashAI.back.models.hugging_face.distilbert_transformer import DistilBertTransformer
 from DashAI.back.models.hugging_face.opus_mt_en_es_transformer import (
