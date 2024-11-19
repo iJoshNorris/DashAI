@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from DashAI.back.api.api_v1.schemas import explorers_params as schemas
 from DashAI.back.core.enums.status import ExplorerStatus
-from DashAI.back.dataloaders.classes.dashai_dataset import load_dataset
+from DashAI.back.dataloaders.classes.dashai_dataset import get_columns_spec
 from DashAI.back.dependencies.database.models import Dataset, Exploration, Explorer
 from DashAI.back.dependencies.registry import ComponentRegistry
 from DashAI.back.exploration.base_explorer import BaseExplorer
@@ -75,16 +75,17 @@ def validate_explorer_params(
         )
 
     # validate columns against dataset columns
-    dataset = load_dataset(f"{dataset.file_path}/dataset")
-    split = list(dataset.keys())[0]
-    columns = dataset[split].column_names
+    dataset_path = f"{dataset.file_path}/dataset"
+    columns_spec = get_columns_spec(dataset_path)
 
-    for col in explorer.columns:
-        if col["columnName"] not in columns:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Column '{col['columnName']}' not found in dataset",
-            )
+    try:
+        explorer_class.validate_columns(explorer, columns_spec)
+    except Exception as e:
+        log.exception(e)
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Error while validating explorer columns",
+        ) from e
 
     return True
 

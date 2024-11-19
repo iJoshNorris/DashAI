@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from pathlib import Path
 
 from beartype.typing import Any, Dict, Final, List
 
@@ -71,6 +72,11 @@ class BaseExplorer(ConfigObject, ABC):
             cls.DISPLAY_NAME if cls.DISPLAY_NAME else cls.__name__
         )
         # Set default values if not present
+        # TODO: Update the metadata when DashAI Types are implemented
+        if metadata.get("allowed_value_types", None) is None:
+            metadata["allowed_value_types"] = ["*"]
+        if metadata.get("restricted_value_types", None) is None:
+            metadata["restricted_value_types"] = []
         if metadata.get("allowed_dtypes", None) is None:
             metadata["allowed_dtypes"] = ["*"]
         if metadata.get("restricted_dtypes", None) is None:
@@ -95,6 +101,66 @@ class BaseExplorer(ConfigObject, ABC):
             True if the parameters are valid, False otherwise.
         """
         return cls.SCHEMA.model_validate(params)
+
+    @classmethod
+    def validate_columns(
+        cls, explorer_info: Explorer, column_spec: Dict[str, Dict[str, str]]
+    ) -> bool:
+        """
+        Validates the columns of the explorer and dataset against the explorer metadata.
+
+        Parameters
+        ----------
+        explorer_info : Explorer
+            The explorer information.
+
+        column_spec : Dict[str, Dict[str, str]]
+            The columns to validate.
+
+        Returns
+        -------
+        bool
+            True if the columns are valid, False otherwise.
+        """
+        metadata = cls.get_metadata()
+        selected_columns = explorer_info.columns
+
+        # Check if the number of columns is valid
+        input_cardinality = metadata.get("input_cardinality", {})
+        if (
+            "min" in input_cardinality
+            and len(selected_columns) < input_cardinality["min"]
+        ):
+            return False
+        if (
+            "max" in input_cardinality
+            and len(selected_columns) > input_cardinality["max"]
+        ):
+            return False
+        if (
+            "exact" in input_cardinality
+            and len(selected_columns) != input_cardinality["exact"]
+        ):
+            return False
+
+        # TODO: Update the logic when DashAI Types are implemented
+        # Check if the columns are of valid types
+        for column in selected_columns:
+            column_name = column["columnName"]
+            column_type = column_spec[column_name]["dtype"]
+
+            # Check if the column's type is allowed
+            if (
+                "*" not in metadata["allowed_dtypes"]
+                and column_type not in metadata["allowed_value_types"]
+            ):
+                return False
+
+            # Check if the column's type is restricted
+            if column_type in metadata["restricted_value_types"]:
+                return False
+
+        return True
 
     def prepare_dataset(
         self, dataset_dict: DatasetDict, columns: List[Dict[str, Any]]
