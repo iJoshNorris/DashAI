@@ -4,13 +4,12 @@ import pickle
 
 import pathvalidate as pv
 import plotly.express as px
-from beartype.typing import Any, Dict, List
+from beartype.typing import Any, Dict
 from plotly.graph_objs import Figure
 
 from DashAI.back.core.schema_fields import bool_field, enum_field, schema_field
 from DashAI.back.dataloaders.classes.dashai_dataset import (  # ClassLabel, Value,
     DashAIDataset,
-    DatasetDict,
 )
 from DashAI.back.dependencies.database.models import Exploration, Explorer
 from DashAI.back.exploration.base_explorer import BaseExplorer, BaseExplorerSchema
@@ -56,12 +55,6 @@ class BoxPlotExplorer(BaseExplorer):
         self.points = kwargs.get("points", "outliers")
 
         super().__init__(**kwargs)
-
-    def prepare_dataset(
-        self, dataset_dict: DatasetDict, columns: List[Dict[str, Any]]
-    ) -> DashAIDataset:
-
-        return super().prepare_dataset(dataset_dict, columns)
 
     def launch_exploration(self, dataset: DashAIDataset, explorer_info: Explorer):
         _df = dataset.to_pandas()
