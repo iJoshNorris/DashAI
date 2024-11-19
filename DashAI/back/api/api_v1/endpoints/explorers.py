@@ -1,5 +1,4 @@
 import logging
-import os
 import pathlib
 
 from beartype.typing import List
@@ -238,10 +237,8 @@ async def delete_explorer(
                 detail="Explorer not found",
             )
         db.delete(explorer)
-        if explorer.exploration_path is not None:
-            path = pathlib.Path(explorer.exploration_path)
-            if path.exists():
-                os.remove(path)
+        explorer.delete_result()
+
         db.commit()
         return Response(status_code=status.HTTP_204_NO_CONTENT)
 

@@ -1,6 +1,9 @@
 import logging
+import os
+import pathlib
 
-from beartype.typing import List, Union
+import pathvalidate as pv
+from beartype.typing import Any, Dict, List, Union
 from fastapi import APIRouter, Depends, Response, status
 from fastapi.exceptions import HTTPException
 from kink import di, inject
@@ -161,6 +164,7 @@ async def update_exploration(
 async def delete_exploration(
     exploration_id: int,
     session_factory: sessionmaker = Depends(lambda: di["session_factory"]),
+    config: Dict[str, Any] = Depends(lambda: di["config"]),
 ):
     """
     Delete an exploration by id.
@@ -181,5 +185,23 @@ async def delete_exploration(
             explorer.delete_result()
 
         db.delete(exploration)
+
+        dir_path = pathlib.Path(
+            os.path.join(
+                config["EXPLORATIONS_PATH"],
+                (f"{exploration.id}_" f"{pv.sanitize_filename(exploration.name)}/"),
+            )
+        )
+
+        if dir_path.exists() and dir_path.is_dir():
+            # remove the directory if it is empty
+            if len(list(dir_path.iterdir())) == 0:
+                dir_path.rmdir()
+            else:
+                log.warning(
+                    f"Exploration Directory {dir_path} is not empty. "
+                    "It will not be removed."
+                )
+
         db.commit()
         return Response(status_code=status.HTTP_204_NO_CONTENT)

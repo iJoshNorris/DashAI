@@ -272,7 +272,17 @@ class Explorer(Base):
         if self.exploration_path is not None:
             path = pathlib.Path(self.exploration_path)
             if path.exists():
-                os.remove(path)
+                if path.is_dir():
+                    if len(list(path.iterdir())) == 0:
+                        path.rmdir()
+                    else:
+                        raise FileExistsError(
+                            f"Error deleting the exploration result, "
+                            f"directory {path} is not empty."
+                        )
+                else:
+                    path.unlink()
+
             self.exploration_path = None
             self.status = ExplorerStatus.NOT_STARTED
             self.delivery_time = None
