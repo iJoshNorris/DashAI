@@ -38,6 +38,12 @@ const columns = [
     headerName: "Data Type",
     flex: 0.5,
   },
+  {
+    field: "order",
+    headerName: "Selected Order",
+    type: "number",
+    flex: 0.5,
+  },
 ];
 
 /**
@@ -80,11 +86,12 @@ function EditColumnsDialog({
         return {
           ...col,
           disabled: !validColsId.has(col.id),
+          order: initialValues.find((row) => row.id === col.id)?.order || 0,
         };
       });
       setRows(cols);
     }
-  }, [datasetColumns, explorerType]);
+  }, [datasetColumns, explorerType, open]);
 
   const [rowSelectionModel, setRowSelectionModel] = useState([]);
   // update row selection model on initial values change or dialog open
@@ -97,11 +104,30 @@ function EditColumnsDialog({
       selection = selection.slice(0, inputCardinality.max);
     }
 
+    // update order for the rows
+    let newRows = rows.map((row) => {
+      const order = selection.indexOf(row.id) + 1;
+      return { ...row, order };
+    });
+    setRows(newRows);
     setRowSelectionModel(selection);
     if (!isValidSelection(selection)) return;
 
     updateValue(
-      datasetColumns.filter((params) => selection.includes(params.id)),
+      newRows
+        .filter((row) => selection.includes(row.id))
+        .sort((a, b) => {
+          return a.order - b.order;
+        })
+        .map((row) => {
+          return {
+            id: row.id,
+            columnName: row.columnName,
+            valueType: row.valueType,
+            dataType: row.dataType,
+            order: row.order,
+          };
+        }),
     );
   };
 
@@ -160,7 +186,7 @@ function EditColumnsDialog({
           onClose={handleClose}
           PaperProps={{
             sx: {
-              width: { md: 820 },
+              width: { md: 820, lg: 1000 },
               maxHeight: { lg: 700, xl: "auto" },
               maxWidth: 2000,
               transition: "width 0.3s ease, height 0.3s ease",
@@ -262,6 +288,14 @@ function EditColumnsDialog({
                     paginationModel: {
                       pageSize: 5,
                     },
+                  },
+                  sorting: {
+                    sortModel: [
+                      {
+                        field: "order",
+                        sort: "asc",
+                      },
+                    ],
                   },
                 }}
                 pageSizeOptions={[5, 10, 20]}
