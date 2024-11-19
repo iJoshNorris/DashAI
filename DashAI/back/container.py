@@ -19,6 +19,7 @@ from DashAI.back.explainability import (
     PermutationFeatureImportance,
 )
 from DashAI.back.exploration import (
+    BoxPlotExplorer,
     DescribeExplorer,
     RowExplorer,
     ScatterPlotExplorer,
@@ -97,6 +98,7 @@ INITIAL_COMPONENTS = [
     ScatterPlotExplorer,
     WordcloudExplorer,
     RowExplorer,
+    BoxPlotExplorer,
 ]
 
 
