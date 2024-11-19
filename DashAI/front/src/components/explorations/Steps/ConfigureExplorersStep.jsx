@@ -124,28 +124,26 @@ function ConfigureExplorersStep({ onValidation = () => {} }) {
         inputCardinality.exact != null
       ) {
         if (tooltip) tooltip += "\n";
-        tooltip += `This explorer requires exactly \
-        ${inputCardinality.exact} valid ${
-          inputCardinality.exact === 1 ? "column" : "columns"
-        }.`;
+        tooltip += `This explorer requires exactly ${
+          inputCardinality.exact
+        } valid ${inputCardinality.exact === 1 ? "column" : "columns"}.`;
         if (validColumns.length < inputCardinality.exact) disabled = true;
       } else {
         if (inputCardinality.min != undefined && inputCardinality.min != null) {
           if (tooltip) tooltip += "\n";
-          tooltip += `This explorer requires at least \
-            ${inputCardinality.min} valid ${
-              inputCardinality.min === 1 ? "column" : "columns"
-            }.`;
+          tooltip += `This explorer requires at least ${
+            inputCardinality.min
+          } valid ${inputCardinality.min === 1 ? "column" : "columns"}.`;
 
           if (validColumns.length < inputCardinality.min) disabled = true;
         }
 
         if (inputCardinality.max != undefined && inputCardinality.max != null) {
           if (tooltip) tooltip += "\n";
-          tooltip += `This explorer requires at most \
+          tooltip += `This explorer requires at most
             ${inputCardinality.max} valid ${
-              inputCardinality.max === 1 ? "column" : "columns"
-            }.`;
+            inputCardinality.max === 1 ? "column" : "columns"
+          }.`;
         }
       }
 
@@ -171,6 +169,11 @@ function ConfigureExplorersStep({ onValidation = () => {} }) {
         tooltip += `\n\n\
           The dataset does not have any valid columns for this explorer.`;
       }
+
+      validColumns = validColumns.map((col, index) => ({
+        ...col,
+        order: index + 1,
+      }));
 
       let label = explorer.metadata.display_name;
       return {
