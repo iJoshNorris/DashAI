@@ -213,7 +213,7 @@ class BaseExplorer(ConfigObject, ABC):
         explorer_info: Explorer,
         save_path: Path,
         result: Any,
-    ) -> Path | str:
+    ) -> str:
         raise NotImplementedError
 
     @abstractmethod
