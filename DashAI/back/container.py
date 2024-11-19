@@ -21,6 +21,7 @@ from DashAI.back.explainability import (
 from DashAI.back.exploration import (
     BoxPlotExplorer,
     DescribeExplorer,
+    MultiColumnBoxPlotExplorer,
     RowExplorer,
     ScatterPlotExplorer,
     WordcloudExplorer,
@@ -99,6 +100,7 @@ INITIAL_COMPONENTS = [
     WordcloudExplorer,
     RowExplorer,
     BoxPlotExplorer,
+    MultiColumnBoxPlotExplorer,
 ]
 
 
