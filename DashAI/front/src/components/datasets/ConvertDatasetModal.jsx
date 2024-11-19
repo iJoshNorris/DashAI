@@ -182,6 +182,8 @@ function ConvertDatasetModal({ datasetId }) {
                   onChange={(event) => setTargetColumnIndex(event.target.value)}
                   variant="outlined"
                   size="small"
+                  required
+                  type="number"
                 />
               </Grid>
             </Grid>

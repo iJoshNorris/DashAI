@@ -92,7 +92,7 @@ const ConverterSelectorModal = ({ setConvertersToApply }) => {
       {/* Modal to select a converter */}
       <Dialog open={open} onClose={handleOnClose} fullWidth maxWidth={"xl"}>
         {/* New converter to apply */}
-        <DialogTitle> Select converter to add </DialogTitle>
+        <DialogTitle> Select a converter to add </DialogTitle>
         <DialogContent dividers>
           <Grid
             container

@@ -21,7 +21,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { TrackChanges, ArrowBackOutlined } from "@mui/icons-material";
+import { ArrowBackOutlined, ViewColumn } from "@mui/icons-material";
 import BoxWithTitle from "../shared/BoxWithTitle";
 import InputWithDebounce from "../shared/InputWithDebounce";
 import { parseIndexToRange } from "../../utils/parseRange";
@@ -177,7 +177,7 @@ const ConverterScopeModal = ({
       >
         <GridActionsCellItem
           key="edit-scope-button"
-          icon={<TrackChanges />}
+          icon={<ViewColumn />}
           label="Set scope"
           onClick={() => setOpen(true)}
         >
