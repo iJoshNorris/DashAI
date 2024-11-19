@@ -145,9 +145,9 @@ class BaseExplorer(ConfigObject, ABC):
         self,
         exploration_info: Exploration,
         explorer_info: Explorer,
-        save_path: str,
+        save_path: Path,
         result: Any,
-    ) -> str:
+    ) -> Path | str:
         raise NotImplementedError
 
     @abstractmethod

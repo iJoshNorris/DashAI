@@ -2,12 +2,12 @@ import os
 import pathlib
 import pickle
 
+import pathvalidate as pv
 import plotly.express as px
 from beartype.typing import Any, Dict, List
 from plotly.graph_objs import Figure
 
 from DashAI.back.core.schema_fields import (
-    enum_field,
     int_field,
     none_type,
     schema_field,
@@ -33,15 +33,10 @@ class ScatterPlotSchema(BaseExplorerSchema):
         None,
         ("The columnName or columnIndex to take for grouping simbol of the points."),
     )  # type: ignore
-    point_size_from: schema_field(
-        enum_field(["column values", "fixed value"]),
-        "column values",
-        ("The source of the point size."),
-    )  # type: ignore
     point_size: schema_field(
         none_type(union_type(string_field(), int_field(ge=0))),
         None,
-        ("The columnName, columnIndex or value to take for the size of the points."),
+        ("The columnName or columnIndex to take for size of each point."),
     )  # type: ignore
 
 
@@ -67,8 +62,7 @@ class ScatterPlotExplorer(BaseExplorer):
     def __init__(self, **kwargs) -> None:
         self.color_column = kwargs.get("color_group")
         self.simbol_column = kwargs.get("simbol_group")
-        self.point_size_from = kwargs.get("point_size_from")
-        self.point_size = kwargs.get("point_size")
+        self.size_column = kwargs.get("point_size")
         super().__init__(**kwargs)
 
     def prepare_dataset(
@@ -102,20 +96,17 @@ class ScatterPlotExplorer(BaseExplorer):
                     columns.append({"columnName": col})
             self.simbol_column = col
 
-        if self.point_size is not None:
-            if self.point_size_from == "column values":
-                if isinstance(self.point_size, (int, float)):
-                    idx = self.point_size
-                    col = dataset_columns[idx]
-                    if col not in explorer_columns:
-                        columns.append({"id": idx, "columnName": col})
-                else:
-                    col = self.point_size
-                    if col not in explorer_columns:
-                        columns.append({"columnName": col})
-                self.point_size = col
-            elif self.point_size_from == "fixed value":
-                self.point_size = int(self.point_size)
+        if self.size_column is not None:
+            if isinstance(self.size_column, (int, float)):
+                idx = self.size_column
+                col = dataset_columns[idx]
+                if col not in explorer_columns:
+                    columns.append({"id": idx, "columnName": col})
+            else:
+                col = self.size_column
+                if col not in explorer_columns:
+                    columns.append({"columnName": col})
+            self.size_column = col
 
         return super().prepare_dataset(dataset_dict, columns)
 
@@ -125,10 +116,7 @@ class ScatterPlotExplorer(BaseExplorer):
 
         colorColumn = self.color_column if self.color_column in _df.columns else None
         simbolColumn = self.simbol_column if self.simbol_column in _df.columns else None
-        if self.point_size_from == "column values" and self.point_size is not None:
-            pointSize = self.point_size if self.point_size in _df.columns else None
-        else:
-            pointSize = None
+        sizeColumn = self.size_column if self.size_column in _df.columns else None
 
         fig = px.scatter(
             _df,
@@ -136,12 +124,9 @@ class ScatterPlotExplorer(BaseExplorer):
             y=cols[1],
             color=colorColumn,
             symbol=simbolColumn,
-            size=pointSize,
+            size=sizeColumn,
             title=f"Scatter Plot of {cols[0]} vs {cols[1]}",
         )
-
-        if self.point_size_from == "fixed value" and self.point_size is not None:
-            fig.update_traces(marker={"size": self.point_size})
 
         if explorer_info.name is not None and explorer_info.name != "":
             fig.update_layout(title=f"{explorer_info.name}")
@@ -152,13 +137,16 @@ class ScatterPlotExplorer(BaseExplorer):
         self,
         __exploration_info__: Exploration,
         explorer_info: Explorer,
-        save_path: str,
+        save_path: pathlib.Path,
         result: Figure,
     ) -> str:
         if explorer_info.name is None or explorer_info.name == "":
             filename = f"{explorer_info.id}.pickle"
         else:
-            filename = f"{explorer_info.id}_{explorer_info.name}.pickle"
+            filename = (
+                f"{explorer_info.id}_"
+                f"{pv.sanitize_filename(explorer_info.name)}.pickle"
+            )
         path = pathlib.Path(os.path.join(save_path, filename))
 
         with open(path, "wb") as f:
