@@ -2,21 +2,18 @@ from sklearn.feature_extraction.text import (
     TfidfVectorizer as TfidfVectorizerOperation,
 )
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
     bool_field,
-    string_field,
     enum_field,
-    none_type,
     float_field,
     int_field,
+    none_type,
+    schema_field,
+    string_field,
     union_type,
 )
-
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class TfidfVectorizerSchema(BaseSchema):
@@ -135,8 +132,10 @@ class TfidfVectorizerSchema(BaseSchema):
     )  # type: ignore
 
 
-class TfidfVectorizer(SklearnLikeConverter, TfidfVectorizerOperation):
+class TfidfVectorizer(SklearnWrapper, TfidfVectorizerOperation):
     """Scikit-learn's TfidfVectorizer wrapper for DashAI."""
 
     SCHEMA = TfidfVectorizerSchema
-    DESCRIPTION = "Convert a collection of raw documents to a matrix of TF-IDF features."
+    DESCRIPTION = (
+        "Convert a collection of raw documents to a matrix of TF-IDF features."
+    )

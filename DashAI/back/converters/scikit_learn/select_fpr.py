@@ -2,15 +2,12 @@ from sklearn.feature_selection import (
     SelectFpr as SelectFprOperation,
 )
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
     float_field,
+    schema_field,
 )
-
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class SelectFprSchema(BaseSchema):
@@ -26,7 +23,7 @@ class SelectFprSchema(BaseSchema):
     )  # type: ignore
 
 
-class SelectFpr(SklearnLikeConverter, SelectFprOperation):
+class SelectFpr(SklearnWrapper, SelectFprOperation):
     """SciKit-Learn's SelectFpr wrapper for DashAI."""
 
     SCHEMA = SelectFprSchema

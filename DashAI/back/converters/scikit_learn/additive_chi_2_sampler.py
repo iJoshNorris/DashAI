@@ -2,17 +2,14 @@ from sklearn.kernel_approximation import (
     AdditiveChi2Sampler as AdditiveChi2SamplerOperation,
 )
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
-    int_field,
     float_field,
+    int_field,
     none_type,
+    schema_field,
 )
-
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class AdditiveChi2SamplerSchema(BaseSchema):
@@ -28,7 +25,7 @@ class AdditiveChi2SamplerSchema(BaseSchema):
     )  # type: ignore
 
 
-class AdditiveChi2Sampler(SklearnLikeConverter, AdditiveChi2SamplerOperation):
+class AdditiveChi2Sampler(SklearnWrapper, AdditiveChi2SamplerOperation):
     """Scikit-learn's AdditiveChi2Sampler wrapper for DashAI."""
 
     SCHEMA = AdditiveChi2SamplerSchema

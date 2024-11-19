@@ -1,15 +1,13 @@
 from sklearn.preprocessing import SplineTransformer as SplineTransformerOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
+    bool_field,
     enum_field,
     int_field,
-    bool_field,
+    schema_field,
 )
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class SplineTransformerSchema(BaseSchema):
@@ -56,7 +54,7 @@ class SplineTransformerSchema(BaseSchema):
     # )  # type: ignore
 
 
-class SplineTransformer(SklearnLikeConverter, SplineTransformerOperation):
+class SplineTransformer(SklearnWrapper, SplineTransformerOperation):
     """Scikit-learn's SplineTransformer wrapper for DashAI."""
 
     SCHEMA = SplineTransformerSchema

@@ -1,16 +1,13 @@
 from sklearn.feature_extraction import FeatureHasher as FeatureHasherOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
-    int_field,
     bool_field,
     enum_field,
+    int_field,
+    schema_field,
 )
-
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class FeatureHasherSchema(BaseSchema):
@@ -36,7 +33,7 @@ class FeatureHasherSchema(BaseSchema):
     )  # type: ignore
 
 
-class FeatureHasher(SklearnLikeConverter, FeatureHasherOperation):
+class FeatureHasher(SklearnWrapper, FeatureHasherOperation):
     """Scikit-learn's FeatureHasher wrapper for DashAI."""
 
     SCHEMA = FeatureHasherSchema

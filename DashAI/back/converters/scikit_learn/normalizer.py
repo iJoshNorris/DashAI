@@ -1,14 +1,12 @@
 from sklearn.preprocessing import Normalizer as NormalizerOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
-    enum_field,
     bool_field,
+    enum_field,
+    schema_field,
 )
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class NormalizerSchema(BaseSchema):
@@ -24,7 +22,7 @@ class NormalizerSchema(BaseSchema):
     )  # type: ignore
 
 
-class Normalizer(SklearnLikeConverter, NormalizerOperation):
+class Normalizer(SklearnWrapper, NormalizerOperation):
     """Scikit-learn's Normalizer wrapper for DashAI."""
 
     SCHEMA = NormalizerSchema

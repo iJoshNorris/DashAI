@@ -1,17 +1,14 @@
 from sklearn.cross_decomposition import PLSCanonical as PLSCanonicalOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
-    int_field,
+    bool_field,
     enum_field,
     float_field,
-    bool_field,
+    int_field,
+    schema_field,
 )
-
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class PLSCanonicalSchema(BaseSchema):
@@ -47,7 +44,7 @@ class PLSCanonicalSchema(BaseSchema):
     )  # type: ignore
 
 
-class PLSCanonical(SklearnLikeConverter, PLSCanonicalOperation):
+class PLSCanonical(SklearnWrapper, PLSCanonicalOperation):
     """Scikit-learn"s PLSCanonical wrapper for DashAI."""
 
     SCHEMA = PLSCanonicalSchema

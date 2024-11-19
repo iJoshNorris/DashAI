@@ -1,16 +1,14 @@
 from sklearn.preprocessing import QuantileTransformer as QuantileTransformerOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
-    none_type,
+    bool_field,
     enum_field,
     int_field,
-    bool_field,
+    none_type,
+    schema_field,
 )
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class QuantileTransformerSchema(BaseSchema):
@@ -47,7 +45,7 @@ class QuantileTransformerSchema(BaseSchema):
     )  # type: ignore
 
 
-class QuantileTransformer(SklearnLikeConverter, QuantileTransformerOperation):
+class QuantileTransformer(SklearnWrapper, QuantileTransformerOperation):
     """Scikit-learn's QuantileTransformer wrapper for DashAI."""
 
     SCHEMA = QuantileTransformerSchema

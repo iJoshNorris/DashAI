@@ -1,17 +1,14 @@
 import logging
-import os
-import shutil
-from typing import Any, Dict
+from typing import Any, Dict, List, Union
 
-from fastapi import APIRouter, Depends, File, Form, Response, UploadFile, status
+from fastapi import APIRouter, Depends, status
 from fastapi.exceptions import HTTPException
 from kink import di, inject
+from pydantic import BaseModel as PydanticBaseModel
 from sqlalchemy import exc
 from sqlalchemy.orm.session import sessionmaker
-from typing import Dict, List, Union
 
 from DashAI.back.dependencies.database.models import ConverterList, Dataset
-from pydantic import BaseModel as PydanticBaseModel
 
 logger = logging.getLogger(__name__)
 router = APIRouter()

@@ -1,18 +1,16 @@
 from sklearn.decomposition import PCA as PCAOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
-    union_type,
+    bool_field,
+    enum_field,
+    float_field,
     int_field,
     none_type,
-    float_field,
-    enum_field,
-    bool_field,
+    schema_field,
+    union_type,
 )
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class PCASchema(BaseSchema):
@@ -69,19 +67,19 @@ class PCASchema(BaseSchema):
             "LU decomposition ('LU') or left untouched ('QR'). Not used by ARPACK."
         ),
     )  # type: ignore
-    random_state: schema_field(
-        none_type(
-            int_field(),
-        ),  # int, RandomState instance or None
-        None,
-        (
-            "Used when the ‘arpack’ or ‘randomized’ solvers are used. "
-            "Pass an int for reproducible results across multiple function calls."
-        ),
-    )  # type: ignore
+    # random_state: schema_field(
+    #     none_type(
+    #         int_field(),
+    #     ),  # int, RandomState instance or None
+    #     None,
+    #     (
+    #         "Used when the ‘arpack’ or ‘randomized’ solvers are used. "
+    #         "Pass an int for reproducible results across multiple function calls."
+    #     ),
+    # )  # type: ignore
 
 
-class PCA(SklearnLikeConverter, PCAOperation):
+class PCA(SklearnWrapper, PCAOperation):
     """Scikit-learn's PCA wrapper for DashAI."""
 
     SCHEMA = PCASchema

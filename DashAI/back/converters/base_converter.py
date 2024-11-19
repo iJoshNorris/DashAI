@@ -19,13 +19,16 @@ class BaseConverter(ConfigObject, metaclass=ABCMeta):
     TYPE: Final[str] = "Converter"
 
     @abstractmethod
-    def fit(self, dataset: pd.DataFrame) -> Type[BaseConverter]:
+    def fit(self, X: pd.DataFrame, y: pd.Series = None) -> Type[BaseConverter]:
         """Fit the converter.
+        This method should allow to validate the converter's parameters.
 
         Parameters
         ----------
-        dataset : Pandas DataFrame
-            Dataset to fit the converter
+        X : Pandas DataFrame
+            Training data
+        y: Pandas Series
+            Target data for supervised learning
 
         Returns
         ----------
@@ -35,13 +38,15 @@ class BaseConverter(ConfigObject, metaclass=ABCMeta):
         raise NotImplementedError
 
     @abstractmethod
-    def transform(self, dataset: pd.DataFrame) -> pd.DataFrame:
+    def transform(self, X: pd.DataFrame, y: pd.Series = None) -> pd.DataFrame:
         """Transform the dataset.
 
         Parameters
         ----------
-        dataset : Pandas DataFrame
+        X : Pandas DataFrame
             Dataset to be converted
+        y: Pandas Series
+            Target vectors
 
         Returns
         -------

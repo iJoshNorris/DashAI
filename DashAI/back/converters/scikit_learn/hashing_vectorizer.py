@@ -2,19 +2,16 @@ from sklearn.feature_extraction.text import (
     HashingVectorizer as HashingVectorizerOperation,
 )
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
-    int_field,
     bool_field,
     enum_field,
-    string_field,
+    int_field,
     none_type,
+    schema_field,
+    string_field,
 )
-
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class HashingVectorizerSchema(BaseSchema):
@@ -102,7 +99,7 @@ class HashingVectorizerSchema(BaseSchema):
     # )  # type: ignore
 
 
-class HashingVectorizer(SklearnLikeConverter, HashingVectorizerOperation):
+class HashingVectorizer(SklearnWrapper, HashingVectorizerOperation):
     """Scikit-learn's HashingVectorizer wrapper for DashAI."""
 
     SCHEMA = HashingVectorizerSchema

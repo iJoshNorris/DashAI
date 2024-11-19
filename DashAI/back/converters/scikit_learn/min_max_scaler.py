@@ -1,13 +1,11 @@
 from sklearn.preprocessing import MinMaxScaler as MinMaxScalerOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
     bool_field,
+    schema_field,
 )
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class MinMaxScalerSchema(BaseSchema):
@@ -28,7 +26,7 @@ class MinMaxScalerSchema(BaseSchema):
     )  # type: ignore
 
 
-class MinMaxScaler(SklearnLikeConverter, MinMaxScalerOperation):
+class MinMaxScaler(SklearnWrapper, MinMaxScalerOperation):
     """Scikit-learn's MinMaxScaler wrapper for DashAI."""
 
     SCHEMA = MinMaxScalerSchema

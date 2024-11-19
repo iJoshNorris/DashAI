@@ -2,20 +2,17 @@ from sklearn.discriminant_analysis import (
     LinearDiscriminantAnalysis as LinearDiscriminantAnalysisOperation,
 )
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
-    int_field,
-    float_field,
     bool_field,
     enum_field,
-    union_type,
+    float_field,
+    int_field,
     none_type,
+    schema_field,
+    union_type,
 )
-
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class LinearDiscriminantAnalysisSchema(BaseSchema):
@@ -61,9 +58,7 @@ class LinearDiscriminantAnalysisSchema(BaseSchema):
     # )  # type: ignore
 
 
-class LinearDiscriminantAnalysis(
-    SklearnLikeConverter, LinearDiscriminantAnalysisOperation
-):
+class LinearDiscriminantAnalysis(SklearnWrapper, LinearDiscriminantAnalysisOperation):
     """Scikit-learn's LinearDiscriminantAnalysis wrapper for DashAI."""
 
     SCHEMA = LinearDiscriminantAnalysisSchema

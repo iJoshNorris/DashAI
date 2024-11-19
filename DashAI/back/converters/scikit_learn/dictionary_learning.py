@@ -1,17 +1,15 @@
 from sklearn.decomposition import DictionaryLearning as DictionaryLearningOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
+    bool_field,
+    enum_field,
+    float_field,
     int_field,
     none_type,
-    float_field,
-    enum_field,
-    bool_field,
+    schema_field,
 )
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class DictionaryLearningSchema(BaseSchema):
@@ -116,7 +114,7 @@ class DictionaryLearningSchema(BaseSchema):
     )  # type: ignore
 
 
-class DictionaryLearning(SklearnLikeConverter, DictionaryLearningOperation):
+class DictionaryLearning(SklearnWrapper, DictionaryLearningOperation):
     """Scikit-learn's DictionaryLearning wrapper for DashAI."""
 
     SCHEMA = DictionaryLearningSchema

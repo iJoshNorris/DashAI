@@ -1,18 +1,15 @@
 from sklearn.manifold import TSNE as TSNEOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
-    int_field,
-    float_field,
-    none_type,
     enum_field,
+    float_field,
+    int_field,
+    none_type,
+    schema_field,
     union_type,
 )
-
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class TSNESchema(BaseSchema):
@@ -128,7 +125,7 @@ class TSNESchema(BaseSchema):
     # )  # type: ignore
 
 
-class TSNE(SklearnLikeConverter, TSNEOperation):
+class TSNE(SklearnWrapper, TSNEOperation):
     """Scikit-learn's TSNE wrapper for DashAI."""
 
     SCHEMA = TSNESchema

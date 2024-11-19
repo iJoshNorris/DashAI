@@ -1,18 +1,15 @@
 from sklearn.decomposition import SparseCoder as SparseCoderOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
-    int_field,
-    float_field,
-    enum_field,
-    none_type,
     bool_field,
+    enum_field,
+    float_field,
+    int_field,
+    none_type,
+    schema_field,
 )
-
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class SparseCoderSchema(BaseSchema):
@@ -54,7 +51,7 @@ class SparseCoderSchema(BaseSchema):
     )  # type: ignore
 
 
-class SparseCoder(SklearnLikeConverter, SparseCoderOperation):
+class SparseCoder(SklearnWrapper, SparseCoderOperation):
     """Scikit-learn's SparseCoder wrapper for DashAI."""
 
     SCHEMA = SparseCoderSchema

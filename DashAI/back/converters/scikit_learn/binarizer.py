@@ -1,14 +1,12 @@
 from sklearn.preprocessing import Binarizer as BinarizerOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
     bool_field,
     float_field,
+    schema_field,
 )
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class BinarizerSchema(BaseSchema):
@@ -24,7 +22,7 @@ class BinarizerSchema(BaseSchema):
     )  # type: ignore
 
 
-class Binarizer(SklearnLikeConverter, BinarizerOperation):
+class Binarizer(SklearnWrapper, BinarizerOperation):
     """Scikit-learn's Binarizer wrapper for DashAI."""
 
     SCHEMA = BinarizerSchema

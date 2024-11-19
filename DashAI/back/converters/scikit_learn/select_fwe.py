@@ -2,15 +2,12 @@ from sklearn.feature_selection import (
     SelectFwe as SelectFweOperation,
 )
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
     float_field,
+    schema_field,
 )
-
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class SelectFweSchema(BaseSchema):
@@ -26,7 +23,7 @@ class SelectFweSchema(BaseSchema):
     )  # type: ignore
 
 
-class SelectFwe(SklearnLikeConverter, SelectFweOperation):
+class SelectFwe(SklearnWrapper, SelectFweOperation):
     """Scikit-learn's SelectFwe wrapper for DashAI."""
 
     SCHEMA = SelectFweSchema

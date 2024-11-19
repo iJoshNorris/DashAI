@@ -1,19 +1,16 @@
 from sklearn.decomposition import KernelPCA as KernelPCAOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
+    bool_field,
+    enum_field,
+    float_field,
     int_field,
     none_type,
-    float_field,
-    enum_field,
-    bool_field,
+    schema_field,
     union_type,
 )
-
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class KernelPCASchema(BaseSchema):
@@ -109,7 +106,7 @@ class KernelPCASchema(BaseSchema):
     )  # type: ignore
 
 
-class KernelPCA(SklearnLikeConverter, KernelPCAOperation):
+class KernelPCA(SklearnWrapper, KernelPCAOperation):
     """Scikit-learn's KernelPCA wrapper for DashAI."""
 
     SCHEMA = KernelPCASchema

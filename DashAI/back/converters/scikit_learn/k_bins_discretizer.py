@@ -1,15 +1,13 @@
 from sklearn.preprocessing import KBinsDiscretizer as KBinsDiscretizerOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
-    none_type,
     enum_field,
     int_field,
+    none_type,
+    schema_field,
 )
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class KBinsDiscretizerSchema(BaseSchema):
@@ -35,7 +33,7 @@ class KBinsDiscretizerSchema(BaseSchema):
     # )  # type: ignore
     sub_sample: schema_field(
         none_type(int_field(gt=0)),
-        None, # Changed in versions 1.3 and 1.5
+        None,  # Changed in versions 1.3 and 1.5
         "Maximum number of samples used to estimate the quantiles for computing the bins.",
     )  # type: ignore
     random_state: schema_field(
@@ -45,7 +43,7 @@ class KBinsDiscretizerSchema(BaseSchema):
     )  # type: ignore
 
 
-class KBinsDiscretizer(SklearnLikeConverter, KBinsDiscretizerOperation):
+class KBinsDiscretizer(SklearnWrapper, KBinsDiscretizerOperation):
     """Scikit-learn's KBinsDiscretizer wrapper for DashAI."""
 
     SCHEMA = KBinsDiscretizerSchema

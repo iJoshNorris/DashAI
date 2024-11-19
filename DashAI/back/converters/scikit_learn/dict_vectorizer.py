@@ -1,15 +1,12 @@
 from sklearn.feature_extraction import DictVectorizer as DictVectorizerOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
     bool_field,
+    schema_field,
     string_field,
 )
-
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class DictVectorizerSchema(BaseSchema):
@@ -35,7 +32,7 @@ class DictVectorizerSchema(BaseSchema):
     )  # type: ignore
 
 
-class DictVectorizer(SklearnLikeConverter, DictVectorizerOperation):
+class DictVectorizer(SklearnWrapper, DictVectorizerOperation):
     """Scikit-learn's DictVectorizer wrapper for DashAI."""
 
     SCHEMA = DictVectorizerSchema

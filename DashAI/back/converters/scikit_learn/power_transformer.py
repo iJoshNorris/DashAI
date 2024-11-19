@@ -1,14 +1,12 @@
 from sklearn.preprocessing import PowerTransformer as PowerTransformerOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
-    enum_field,
     bool_field,
+    enum_field,
+    schema_field,
 )
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class PowerTransformerSchema(BaseSchema):
@@ -29,7 +27,7 @@ class PowerTransformerSchema(BaseSchema):
     )  # type: ignore
 
 
-class PowerTransformer(SklearnLikeConverter, PowerTransformerOperation):
+class PowerTransformer(SklearnWrapper, PowerTransformerOperation):
     """Scikit-learn's PowerTransformer wrapper for DashAI."""
 
     SCHEMA = PowerTransformerSchema

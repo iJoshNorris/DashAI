@@ -1,17 +1,14 @@
 from sklearn.decomposition import TruncatedSVD as TruncatedSVDOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
+    enum_field,
+    float_field,
     int_field,
     none_type,
-    float_field,
-    enum_field,
+    schema_field,
 )
-
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class TruncatedSVDSchema(BaseSchema):
@@ -52,7 +49,7 @@ class TruncatedSVDSchema(BaseSchema):
     )  # type: ignore
 
 
-class TruncatedSVD(SklearnLikeConverter, TruncatedSVDOperation):
+class TruncatedSVD(SklearnWrapper, TruncatedSVDOperation):
     """Scikit-learn's TruncatedSVD wrapper for DashAI."""
 
     SCHEMA = TruncatedSVDSchema

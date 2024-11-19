@@ -1,20 +1,17 @@
 from sklearn.impute import MissingIndicator as MissingIndicatorOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
     bool_field,
-    none_type,
-    int_field,
+    enum_field,
     float_field,
+    int_field,
+    none_type,
+    schema_field,
     string_field,
     union_type,
-    enum_field,
 )
-
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class MissingIndicatorSchema(BaseSchema):
@@ -42,7 +39,7 @@ class MissingIndicatorSchema(BaseSchema):
     )  # type: ignore
 
 
-class MissingIndicator(SklearnLikeConverter, MissingIndicatorOperation):
+class MissingIndicator(SklearnWrapper, MissingIndicatorOperation):
     """Scikit-learn's MissingIndicator wrapper for DashAI."""
 
     SCHEMA = MissingIndicatorSchema

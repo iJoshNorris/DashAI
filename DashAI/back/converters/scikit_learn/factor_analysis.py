@@ -1,18 +1,15 @@
 from sklearn.decomposition import FactorAnalysis as FactorAnalysisOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
-    int_field,
-    none_type,
-    float_field,
     bool_field,
     enum_field,
+    float_field,
+    int_field,
+    none_type,
+    schema_field,
 )
-
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class FactorAnalysisSchema(BaseSchema):
@@ -64,7 +61,7 @@ class FactorAnalysisSchema(BaseSchema):
     )  # type: ignore
 
 
-class FactorAnalysis(SklearnLikeConverter, FactorAnalysisOperation):
+class FactorAnalysis(SklearnWrapper, FactorAnalysisOperation):
     """Scikit-learn's FactorAnalysis wrapper for DashAI."""
 
     SCHEMA = FactorAnalysisSchema

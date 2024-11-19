@@ -1,16 +1,13 @@
 from sklearn.kernel_approximation import SkewedChi2Sampler as SkewedChi2SamplerOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
-    int_field,
     float_field,
+    int_field,
     none_type,
+    schema_field,
 )
-
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class SkewedChi2SamplerSchema(BaseSchema):
@@ -31,7 +28,7 @@ class SkewedChi2SamplerSchema(BaseSchema):
     )  # type: ignore
 
 
-class SkewedChi2Sampler(SklearnLikeConverter, SkewedChi2SamplerOperation):
+class SkewedChi2Sampler(SklearnWrapper, SkewedChi2SamplerOperation):
     """Scikit-learn's SkewedChi2Sampler wrapper for DashAI."""
 
     SCHEMA = SkewedChi2SamplerSchema

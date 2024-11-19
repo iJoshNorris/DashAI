@@ -12,6 +12,7 @@ import {
   Tooltip,
   Typography,
   IconButton,
+  TextField,
 } from "@mui/material";
 import DatasetSummaryTable from "./DatasetSummaryTable";
 import ConverterSelectorModal from "./ConverterSelectorModal";
@@ -24,6 +25,7 @@ import { saveDatasetConverterList } from "../../api/converter";
 function ConvertDatasetModal({ datasetId }) {
   const { enqueueSnackbar } = useSnackbar();
   const [open, setOpen] = useState(false);
+  const [targetColumnIndex, setTargetColumnIndex] = useState(null);
   const [convertersToApply, setConvertersToApply] = useState([]);
 
   const handleCloseContent = () => {
@@ -32,7 +34,7 @@ function ConvertDatasetModal({ datasetId }) {
 
   const enqueueConverterJob = async (converterListId) => {
     try {
-      await enqueueConverterJobRequest(converterListId);
+      await enqueueConverterJobRequest(converterListId, targetColumnIndex);
       enqueueSnackbar("Converter job successfully created.", {
         variant: "success",
       });
@@ -87,6 +89,7 @@ function ConvertDatasetModal({ datasetId }) {
       });
 
       setConvertersToApply([]);
+      setTargetColumnIndex(null);
       setOpen(false);
     } catch (error) {
       enqueueSnackbar("Error while trying to modify the dataset");
@@ -141,19 +144,46 @@ function ConvertDatasetModal({ datasetId }) {
 
             {/* Converter selector */}
             <Grid item xs={12} display={"flex"} alignItems={"center"} gap={2}>
-              <Typography variant="subtitle1" component="h3" mb={1}>
-                List of converters
-              </Typography>
-              <Tooltip
-                title={`Converters are for modifying the data in a supervised or unsupervised way
+              <Grid item xs={6} display={"flex"} alignItems={"center"}>
+                <Typography variant="subtitle1" component="h3" mb={1}>
+                  List of converters
+                </Typography>
+                <Tooltip
+                  title={`Converters are for modifying the data in a supervised or unsupervised way
     (e.g. by adding, changing, or removing columns, but not by adding or removing rows). The list will be applied following the defined order.`}
-                placement="top"
-              >
-                <IconButton>
-                  <Help />
-                </IconButton>
-              </Tooltip>
-              <ConverterSelectorModal setConvertersToApply={setConvertersToApply} />
+                  placement="top"
+                >
+                  <IconButton>
+                    <Help />
+                  </IconButton>
+                </Tooltip>
+                <ConverterSelectorModal
+                  setConvertersToApply={setConvertersToApply}
+                />
+              </Grid>
+              <Grid item xs={6} display={"flex"} alignItems={"center"}>
+                <Typography variant="subtitle2" component="h3" mb={1}>
+                  Target column index
+                </Typography>
+                <Tooltip
+                  title={`Supervised converters will include this column in their learning process.`}
+                  placement="top"
+                >
+                  <IconButton>
+                    <Help />
+                  </IconButton>
+                </Tooltip>
+                <TextField
+                  id="target-column-index"
+                  label="Index"
+                  value={targetColumnIndex}
+                  placeholder="1"
+                  autoComplete="off"
+                  onChange={(event) => setTargetColumnIndex(event.target.value)}
+                  variant="outlined"
+                  size="small"
+                />
+              </Grid>
             </Grid>
             {/* Selected converters table */}
             <ConverterTable
@@ -171,7 +201,9 @@ function ConvertDatasetModal({ datasetId }) {
             autoFocus
             variant="contained"
             color="primary"
-            disabled={convertersToApply.length === 0}
+            disabled={
+              convertersToApply.length === 0 || targetColumnIndex === null
+            }
           >
             Modify
           </Button>

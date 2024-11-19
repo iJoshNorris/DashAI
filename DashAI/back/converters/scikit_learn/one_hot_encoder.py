@@ -1,18 +1,16 @@
 from sklearn.preprocessing import OneHotEncoder as OneHotEncoderOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
-    none_type,
-    enum_field,
-    union_type,
     bool_field,
-    int_field,
+    enum_field,
     float_field,
+    int_field,
+    none_type,
+    schema_field,
+    union_type,
 )
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class OneHotEncoderSchema(BaseSchema):
@@ -65,7 +63,7 @@ class OneHotEncoderSchema(BaseSchema):
     # )  # type: ignore
 
 
-class OneHotEncoder(SklearnLikeConverter, OneHotEncoderOperation):
+class OneHotEncoder(SklearnWrapper, OneHotEncoderOperation):
     """Scikit-learn's OneHotEncoder wrapper for DashAI."""
 
     SCHEMA = OneHotEncoderSchema

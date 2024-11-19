@@ -1,16 +1,14 @@
 from sklearn.preprocessing import LabelEncoder as LabelEncoderOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class LabelEncoderSchema(BaseSchema):
     pass
 
 
-class LabelEncoder(SklearnLikeConverter, LabelEncoderOperation):
+class LabelEncoder(SklearnWrapper, LabelEncoderOperation):
     """Scikit-learn's LabelEncoder wrapper for DashAI."""
 
     SCHEMA = LabelEncoderSchema

@@ -2,17 +2,14 @@ from sklearn.feature_extraction.text import (
     TfidfTransformer as TfidfTransformerOperation,
 )
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
     bool_field,
     enum_field,
     none_type,
+    schema_field,
 )
-
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class TfidfTransformerSchema(BaseSchema):
@@ -38,7 +35,7 @@ class TfidfTransformerSchema(BaseSchema):
     )  # type: ignore
 
 
-class TfidfTransformer(SklearnLikeConverter, TfidfTransformerOperation):
+class TfidfTransformer(SklearnWrapper, TfidfTransformerOperation):
     """Scikit-learn's TfidfTransformer wrapper for DashAI."""
 
     SCHEMA = TfidfTransformerSchema

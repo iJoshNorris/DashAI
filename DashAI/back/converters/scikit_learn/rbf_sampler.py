@@ -1,18 +1,15 @@
 from sklearn.kernel_approximation import RBFSampler as RBFSamplerOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
-    int_field,
-    float_field,
-    none_type,
-    union_type,
     enum_field,
+    float_field,
+    int_field,
+    none_type,
+    schema_field,
+    union_type,
 )
-
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class RBFSamplerSchema(BaseSchema):
@@ -33,7 +30,7 @@ class RBFSamplerSchema(BaseSchema):
     )  # type: ignore
 
 
-class RBFSampler(SklearnLikeConverter, RBFSamplerOperation):
+class RBFSampler(SklearnWrapper, RBFSamplerOperation):
     """Scikit-learn's RBFSampler wrapper for DashAI."""
 
     SCHEMA = RBFSamplerSchema

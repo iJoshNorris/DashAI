@@ -1,16 +1,13 @@
 from sklearn.cross_decomposition import PLSRegression as PLSRegressionOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
-    int_field,
-    float_field,
     bool_field,
+    float_field,
+    int_field,
+    schema_field,
 )
-
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class PLSRegressionSchema(BaseSchema):
@@ -41,7 +38,7 @@ class PLSRegressionSchema(BaseSchema):
     )  # type: ignore
 
 
-class PLSRegression(SklearnLikeConverter, PLSRegressionOperation):
+class PLSRegression(SklearnWrapper, PLSRegressionOperation):
     """Scikit-learn's PLSRegression wrapper for DashAI."""
 
     SCHEMA = PLSRegressionSchema

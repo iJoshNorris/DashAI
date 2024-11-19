@@ -1,4 +1,3 @@
-import { IDataset } from "../types/dataset";
 import api from "./api";
 
 export const getJobs = async (): Promise<object> => {
@@ -30,14 +29,15 @@ export const enqueueExplainerJob = async (
 };
 
 export const enqueueConverterJob = async (
-  // datasetId: number,
   converterListId: number,
-  // converters: object,
+  targetColumnIndex: number,
 ): Promise<object> => {
   const data = {
     job_type: "ConverterListJob",
-    // kwargs: { dataset_id: datasetId, converters_to_apply: converters },
-    kwargs: { converter_list_id: converterListId },
+    kwargs: {
+      converter_list_id: converterListId,
+      target_column_index: targetColumnIndex,
+    },
   };
 
   const response = await api.post<object>("/v1/job/", data);

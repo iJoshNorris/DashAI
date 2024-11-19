@@ -1,20 +1,17 @@
 from sklearn.feature_extraction.text import CountVectorizer as CountVectorizerOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
     bool_field,
-    string_field,
     enum_field,
-    none_type,
-    union_type,
     float_field,
     int_field,
+    none_type,
+    schema_field,
+    string_field,
+    union_type,
 )
-
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class CountVectorizerSchema(BaseSchema):
@@ -69,7 +66,9 @@ class CountVectorizerSchema(BaseSchema):
     #     "The lower and upper boundary of the range of n-values for different n-grams to be extracted.",
     # )  # type: ignore
     analyzer: schema_field(
-        enum_field(["word", "char", "char_wb"]), # {‘word’, ‘char’, ‘char_wb’} or callable
+        enum_field(
+            ["word", "char", "char_wb"]
+        ),  # {‘word’, ‘char’, ‘char_wb’} or callable
         "word",
         "Whether the feature should be made of word or character n-grams.",
     )  # type: ignore
@@ -111,7 +110,7 @@ class CountVectorizerSchema(BaseSchema):
     # )  # type: ignore
 
 
-class CountVectorizer(SklearnLikeConverter, CountVectorizerOperation):
+class CountVectorizer(SklearnWrapper, CountVectorizerOperation):
     """Scikit-learn's CountVectorizer wrapper for DashAI."""
 
     SCHEMA = CountVectorizerSchema

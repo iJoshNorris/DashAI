@@ -1,21 +1,17 @@
 from sklearn.impute import SimpleImputer as SimpleImputerOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
+    bool_field,
+    enum_field,
+    float_field,
+    int_field,
+    none_type,
     schema_field,
     string_field,
     union_type,
-    enum_field,
-    int_field,
-    float_field,
-    string_field,
-    none_type,
-    bool_field,
 )
-
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class SimpleImputerSchema(BaseSchema):
@@ -59,7 +55,7 @@ class SimpleImputerSchema(BaseSchema):
     )  # type: ignore
 
 
-class SimpleImputer(SklearnLikeConverter, SimpleImputerOperation):
+class SimpleImputer(SklearnWrapper, SimpleImputerOperation):
     """SciKit-Learn's SimpleImputer wrapper for DashAI."""
 
     SCHEMA = SimpleImputerSchema

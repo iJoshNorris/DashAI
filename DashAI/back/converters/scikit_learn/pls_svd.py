@@ -1,17 +1,12 @@
 from sklearn.cross_decomposition import PLSSVD as PLSSVDOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
-    int_field,
-    enum_field,
-    float_field,
     bool_field,
+    int_field,
+    schema_field,
 )
-
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class PLSSVDSchema(BaseSchema):
@@ -32,7 +27,7 @@ class PLSSVDSchema(BaseSchema):
     )  # type: ignore
 
 
-class PLSSVD(SklearnLikeConverter, PLSSVDOperation):
+class PLSSVD(SklearnWrapper, PLSSVDOperation):
     """Scikit-learn's PLSSVD wrapper for DashAI."""
 
     SCHEMA = PLSSVDSchema

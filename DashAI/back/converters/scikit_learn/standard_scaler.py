@@ -1,9 +1,8 @@
 from sklearn.preprocessing import StandardScaler as StandardScalerOperation
+
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import bool_field, schema_field
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class StandardScalerSchema(BaseSchema):
@@ -24,7 +23,7 @@ class StandardScalerSchema(BaseSchema):
     )  # type: ignore
 
 
-class StandardScaler(SklearnLikeConverter, StandardScalerOperation):
+class StandardScaler(SklearnWrapper, StandardScalerOperation):
     """Scikit-learn's Standard Scaler wrapper for DashAI."""
 
     SCHEMA = StandardScalerSchema

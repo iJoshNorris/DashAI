@@ -1,20 +1,17 @@
 from sklearn.impute import KNNImputer as KNNImputerOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
     bool_field,
-    none_type,
-    int_field,
+    enum_field,
     float_field,
+    int_field,
+    none_type,
+    schema_field,
     string_field,
     union_type,
-    enum_field,
 )
-
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class KNNImputerSchema(BaseSchema):
@@ -57,7 +54,7 @@ class KNNImputerSchema(BaseSchema):
     )  # type: ignore
 
 
-class KNNImputer(SklearnLikeConverter, KNNImputerOperation):
+class KNNImputer(SklearnWrapper, KNNImputerOperation):
     """Scikit-learn's KNNImputer wrapper for DashAI."""
 
     SCHEMA = KNNImputerSchema

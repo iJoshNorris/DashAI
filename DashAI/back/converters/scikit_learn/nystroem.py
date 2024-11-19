@@ -1,17 +1,14 @@
 from sklearn.kernel_approximation import Nystroem as NystroemOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
-    int_field,
     float_field,
+    int_field,
     none_type,
+    schema_field,
     string_field,
 )
-
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class NystroemSchema(BaseSchema):
@@ -57,7 +54,7 @@ class NystroemSchema(BaseSchema):
     )  # type: ignore
 
 
-class Nystroem(SklearnLikeConverter, NystroemOperation):
+class Nystroem(SklearnWrapper, NystroemOperation):
     """Scikit-learn's Nystroem wrapper for DashAI."""
 
     SCHEMA = NystroemSchema

@@ -1,17 +1,14 @@
 from sklearn.decomposition import FastICA as FastICAOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
+    enum_field,
+    float_field,
     int_field,
     none_type,
-    float_field,
-    enum_field,
+    schema_field,
 )
-
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class FastICASchema(BaseSchema):
@@ -75,7 +72,7 @@ class FastICASchema(BaseSchema):
     )  # type: ignore
 
 
-class FastICA(SklearnLikeConverter, FastICAOperation):
+class FastICA(SklearnWrapper, FastICAOperation):
     """Scikit-learn's FastICA wrapper for DashAI."""
 
     SCHEMA = FastICASchema

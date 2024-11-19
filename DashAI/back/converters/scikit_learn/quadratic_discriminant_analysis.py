@@ -2,16 +2,13 @@ from sklearn.discriminant_analysis import (
     QuadraticDiscriminantAnalysis as QuadraticDiscriminantAnalysisOperation,
 )
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
-    float_field,
     bool_field,
+    float_field,
+    schema_field,
 )
-
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class QuadraticDiscriminantAnalysisSchema(BaseSchema):
@@ -38,7 +35,7 @@ class QuadraticDiscriminantAnalysisSchema(BaseSchema):
 
 
 class QuadraticDiscriminantAnalysis(
-    SklearnLikeConverter, QuadraticDiscriminantAnalysisOperation
+    SklearnWrapper, QuadraticDiscriminantAnalysisOperation
 ):
     """Scikit-learn's QuadraticDiscriminantAnalysis wrapper for DashAI."""
 

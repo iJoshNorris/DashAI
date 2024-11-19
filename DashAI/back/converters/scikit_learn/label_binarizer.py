@@ -1,14 +1,12 @@
 from sklearn.preprocessing import LabelBinarizer as LabelBinarizerOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
-    int_field,
     bool_field,
+    int_field,
+    schema_field,
 )
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class LabelBinarizerSchema(BaseSchema):
@@ -29,7 +27,7 @@ class LabelBinarizerSchema(BaseSchema):
     )  # type: ignore
 
 
-class LabelBinarizer(SklearnLikeConverter, LabelBinarizerOperation):
+class LabelBinarizer(SklearnWrapper, LabelBinarizerOperation):
     """Scikit-learn's LabelBinarizer wrapper for DashAI."""
 
     SCHEMA = LabelBinarizerSchema

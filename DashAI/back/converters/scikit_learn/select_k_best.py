@@ -2,17 +2,14 @@ from sklearn.feature_selection import (
     SelectKBest as SelectKBestOperation,
 )
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
-    union_type,
     enum_field,
     int_field,
+    schema_field,
+    union_type,
 )
-
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class SelectKBestSchema(BaseSchema):
@@ -28,7 +25,7 @@ class SelectKBestSchema(BaseSchema):
     )  # type: ignore
 
 
-class SelectKBest(SklearnLikeConverter, SelectKBestOperation):
+class SelectKBest(SklearnWrapper, SelectKBestOperation):
     """SciKit-Learn's SelectKBest wrapper for DashAI."""
 
     SCHEMA = SelectKBestSchema

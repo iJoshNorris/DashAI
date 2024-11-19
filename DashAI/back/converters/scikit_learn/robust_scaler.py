@@ -1,13 +1,11 @@
 from sklearn.preprocessing import RobustScaler as RobustScalerOperation
 
+from DashAI.back.converters.sklearn_wrapper import SklearnWrapper
 from DashAI.back.core.schema_fields import (
-    schema_field,
     bool_field,
+    schema_field,
 )
 from DashAI.back.core.schema_fields.base_schema import BaseSchema
-from DashAI.back.converters.scikit_learn.sklearn_like_converter import (
-    SklearnLikeConverter,
-)
 
 
 class RobustScalerSchema(BaseSchema):
@@ -38,7 +36,7 @@ class RobustScalerSchema(BaseSchema):
     )  # type: ignore
 
 
-class RobustScaler(SklearnLikeConverter, RobustScalerOperation):
+class RobustScaler(SklearnWrapper, RobustScalerOperation):
     """Scikit-learn's RobustScaler wrapper for DashAI."""
 
     SCHEMA = RobustScalerSchema
