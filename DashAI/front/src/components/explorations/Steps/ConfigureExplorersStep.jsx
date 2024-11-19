@@ -140,10 +140,9 @@ function ConfigureExplorersStep({ onValidation = () => {} }) {
 
         if (inputCardinality.max != undefined && inputCardinality.max != null) {
           if (tooltip) tooltip += "\n";
-          tooltip += `This explorer requires at most
-            ${inputCardinality.max} valid ${
-            inputCardinality.max === 1 ? "column" : "columns"
-          }.`;
+          tooltip += `This explorer requires at most ${
+            inputCardinality.max
+          } valid ${inputCardinality.max === 1 ? "column" : "columns"}.`;
         }
       }
 
