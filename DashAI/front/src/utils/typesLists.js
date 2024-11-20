@@ -27,6 +27,6 @@ export const dataTypesList = [
   "large_string",
 ];
 
-export const imageTypesList = ["Burro", "Shrek", "Fiona", "Lord Farquaad", "Gato con botas"];
+export const imageTypesList = ["Path to file", "Image bytes", "Pixel matrix", "PIL Image object"];
 
 export const columnTypesList = ["Value", "ClassLabel", "Image"];

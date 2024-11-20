@@ -100,6 +100,8 @@ class DashAIDataset(Dataset):
                 new_features[column] = ClassLabel(names=names)
             elif column_types[column] == "Numerical":
                 new_features[column] = Value("float32")
+            elif column_types[column] == "Image":
+                new_features[column] = Image()
         dataset = self.cast(new_features)
         return dataset
 
@@ -579,9 +581,9 @@ def update_columns_spec(dataset_path: str, columns: Dict) -> DatasetDict:
         # Cast the column types with the changes
         try:
             dataset_dict[split] = dataset_dict[split].cast(new_features)
-
         except ValueError as e:
             raise ValueError("Error while trying to cast the columns") from e
+    print("Dataset actualizado",dataset_dict["train"].features)
     return dataset_dict
 
 

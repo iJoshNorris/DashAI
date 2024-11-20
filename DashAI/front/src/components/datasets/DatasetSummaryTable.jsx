@@ -74,9 +74,14 @@ function DatasetSummaryTable({
       ),
     );
 
+    console.log(rows);
+
     const columnName = rows.find((row) => row.id === id)?.columnName;
     const updateColumns = { ...columnsSpec };
-
+    
+    console.log(updateColumns);
+    console.log(columnName);
+    
     if (field === "dataType") {
       updateColumns[columnName].dtype = newValue;
     } else if (field === "columnType") {
@@ -91,7 +96,7 @@ function DatasetSummaryTable({
     setColumnsSpec(updateColumns);
   };
 
-  const renderSelectCell = (params, options) => {
+  const renderSelectCell = (params, options) => {console.log(params);
     return (
       <SelectTypeCell
         id={params.id}
@@ -130,7 +135,7 @@ function DatasetSummaryTable({
       field: "dataType",
       headerName: "Data type",
       renderEditCell: (params) => {
-        const datatypes = params.row.columnType === "Value" ? dataTypesList : imageTypesList;
+        const datatypes = params.row.columnType === "Image" ?  imageTypesList : dataTypesList;
         return isEditable && renderSelectCell(params, datatypes);
       },
       minWidth: 200,
