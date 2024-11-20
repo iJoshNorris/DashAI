@@ -31,6 +31,7 @@ from DashAI.back.models import (
     LogisticRegression,
     OpusMtEnESTransformer,
     RandomForestClassifier,
+    StableDiffusionModel,
     ViTTransformer,
 )
 from DashAI.back.optimizers import (
@@ -39,6 +40,7 @@ from DashAI.back.optimizers import (
 )
 from DashAI.back.tasks import (
     ImageClassificationTask,
+    ImageGenerationTask,
     TabularClassificationTask,
     TextClassificationTask,
     TranslationTask,
@@ -53,6 +55,7 @@ INITIAL_COMPONENTS = [
     TextClassificationTask,
     TranslationTask,
     ImageClassificationTask,
+    ImageGenerationTask,
     # Models
     SVC,
     DecisionTreeClassifier,
@@ -65,6 +68,7 @@ INITIAL_COMPONENTS = [
     ViTTransformer,
     OpusMtEnESTransformer,
     BagOfWordsTextClassificationModel,
+    StableDiffusionModel,
     # Dataloaders
     CSVDataLoader,
     JSONDataLoader,
