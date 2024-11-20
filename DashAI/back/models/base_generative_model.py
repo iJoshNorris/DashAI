@@ -9,7 +9,7 @@ class BaseGenerativeModel(ConfigObject, metaclass=ABCMeta):
     TYPE: Final[str] = "Model"
 
     @abstractmethod
-    def __init__(self, model_id: str, **kwargs):
+    def __init__(self, **kwargs):
         """Initialize the generative model.
         model_id (str): The ID of the model.
         """
@@ -20,14 +20,5 @@ class BaseGenerativeModel(ConfigObject, metaclass=ABCMeta):
         """Generate output from a generative model.
 
         input (Any): Input to the generative model.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def process_output(self, out: Any, file_name: str, path: str) -> str:
-        """Process the output of a generative model.
-
-        file_name (Str): Indicates the name of the file.
-        path (Str): Indicates the path where the output will be stored.
         """
         raise NotImplementedError
