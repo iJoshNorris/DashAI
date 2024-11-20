@@ -29,7 +29,7 @@ from DashAI.back.models import (
     HistGradientBoostingClassifier,
     ImageGenerationModel,
     KNeighborsClassifier,
-    LlamaModel,
+    LLMGenerationModel,
     LogisticRegression,
     OpusMtEnESTransformer,
     RandomForestClassifier,
@@ -65,6 +65,7 @@ INITIAL_COMPONENTS = [
     OpusMtEnESTransformer,
     BagOfWordsTextClassificationModel,
     ImageGenerationModel,
+    LLMGenerationModel,
     # Dataloaders
     CSVDataLoader,
     JSONDataLoader,

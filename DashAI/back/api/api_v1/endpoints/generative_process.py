@@ -53,8 +53,8 @@ async def upload_generative_process(
             model_information = hugging_face_api.model_info(params.model_name)
             generative_task = model_information.pipeline_tag
             task_to_model = {
-                "text-generation": "TextGenerationModel",
-                "text2text-generation": "TextGenerationModel",
+                "text-generation": "LLMGenerationModel",
+                "text2text-generation": "LLMGenerationModel",
                 "text-to-image": "ImageGenerationModel",
             }
 
