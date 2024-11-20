@@ -62,12 +62,13 @@ class GenerativeJob(BaseJob):
             GenerativeModel, generative_session.model_id
         )
 
-        model_class = component_registry[generative_model.generative_model]["class"]
-        params = generative_process.parameters
+        model_class = component_registry[generative_model.name]["class"]
+        params = generative_session.parameters
 
         try:
-            model: BaseGenerativeModel = model_class(generative_model.name, **params)
+            model: BaseGenerativeModel = model_class(**params)
         except TypeError as e:
+            print(e)
             logging.error(e)
 
         input_data = generative_process.input
