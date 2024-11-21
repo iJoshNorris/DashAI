@@ -83,7 +83,15 @@ from DashAI.back.explainability import (
     PartialDependence,
     PermutationFeatureImportance,
 )
-from DashAI.back.job import ConverterListJob, ExplainerJob, ModelJob
+from DashAI.back.exploration import (
+    BoxPlotExplorer,
+    DescribeExplorer,
+    MultiColumnBoxPlotExplorer,
+    RowExplorer,
+    ScatterPlotExplorer,
+    WordcloudExplorer,
+)
+from DashAI.back.job import ConverterListJob, ExplainerJob, ExplorerJob, ModelJob
 from DashAI.back.metrics import F1, Accuracy, Bleu, Precision, Recall
 from DashAI.back.models import (
     SVC,
@@ -98,10 +106,7 @@ from DashAI.back.models import (
     RandomForestClassifier,
     ViTTransformer,
 )
-from DashAI.back.optimizers import (
-    HyperOptOptimizer,
-    OptunaOptimizer,
-)
+from DashAI.back.optimizers import HyperOptOptimizer, OptunaOptimizer
 from DashAI.back.tasks import (
     ImageClassificationTask,
     TabularClassificationTask,
@@ -147,6 +152,7 @@ INITIAL_COMPONENTS = [
     # Jobs
     ExplainerJob,
     ModelJob,
+    ExplorerJob,
     ConverterListJob,
     # Explainers
     KernelShap,
@@ -154,6 +160,13 @@ INITIAL_COMPONENTS = [
     PermutationFeatureImportance,
     # Explainers Fit Schema
     FitKernelShap,
+    # Explorers
+    DescribeExplorer,
+    ScatterPlotExplorer,
+    WordcloudExplorer,
+    RowExplorer,
+    BoxPlotExplorer,
+    MultiColumnBoxPlotExplorer,
     # Converters
     CCA,
     PLSCanonical,
