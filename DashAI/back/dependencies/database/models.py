@@ -7,7 +7,12 @@ from sqlalchemy import JSON, DateTime, Enum, ForeignKey, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from DashAI.back.core.enums.status import ExplainerStatus, ExplorerStatus, RunStatus
+from DashAI.back.core.enums.status import (
+    ConverterListStatus,
+    ExplainerStatus,
+    ExplorerStatus,
+    RunStatus,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -196,6 +201,47 @@ class LocalExplainer(Base):
         self.status = ExplainerStatus.ERROR
 
 
+class ConverterList(Base):
+    __tablename__ = "converter_list"
+    """
+    Table to store a list of converters applied to a dataset.
+    """
+    id: Mapped[int] = mapped_column(primary_key=True)
+    dataset_id: Mapped[int] = mapped_column(nullable=False)
+    converters: Mapped[JSON] = mapped_column(JSON)
+    created: Mapped[DateTime] = mapped_column(DateTime, default=datetime.now)
+    status: Mapped[Enum] = mapped_column(
+        Enum(ConverterListStatus),
+        nullable=False,
+        default=ConverterListStatus.NOT_STARTED,
+    )
+
+    def set_status_as_delivered(self) -> None:
+        """Update the status of the list to delivered and set delivery_time
+        to now.
+        """
+        self.status = ConverterListStatus.DELIVERED
+        self.delivery_time = datetime.now()
+
+    def set_status_as_started(self) -> None:
+        """Update the status of the list to started and set start_time
+        to now.
+        """
+        self.status = ConverterListStatus.STARTED
+        self.start_time = datetime.now()
+
+    def set_status_as_finished(self) -> None:
+        """Update the status of the list to finished and set end_time
+        to now.
+        """
+        self.status = ConverterListStatus.FINISHED
+        self.end_time = datetime.now()
+
+    def set_status_as_error(self) -> None:
+        """Update the status of the list to error."""
+        self.status = ConverterListStatus.ERROR
+
+        
 class Exploration(Base):
     __tablename__ = "exploration"
     """

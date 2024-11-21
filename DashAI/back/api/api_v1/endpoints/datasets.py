@@ -412,10 +412,14 @@ async def update_dataset(
     ----------
     dataset_id : int
         ID of the dataset to update.
-    name : str, optional
-        New name for the dataset.
-    task_name : str, optional
-        New task name for the dataset.
+    params : DatasetUpdateParams
+        A dictionary containing the new values for the dataset.
+        name : str, optional
+            New name for the dataset.
+        task_name : str, optional
+            New task name for the dataset.
+        columns : Dict[str, ColumnSpecItemParams], optional
+            New column specification for the dataset.
     session_factory : Callable[..., ContextManager[Session]]
         A factory that creates a context manager that handles a SQLAlchemy session.
         The generated session can be used to access and query the database.
@@ -430,7 +434,7 @@ async def update_dataset(
             dataset = db.get(Dataset, dataset_id)
             if params.columns:
                 update_columns_spec(f"{dataset.file_path}/dataset", params.columns)
-            if params.name:
+            elif params.name:
                 setattr(dataset, "name", params.name)
                 db.commit()
                 db.refresh(dataset)
