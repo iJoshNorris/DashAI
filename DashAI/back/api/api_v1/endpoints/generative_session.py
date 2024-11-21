@@ -44,7 +44,9 @@ async def upload_generative_session(
     with session_factory() as db:
         try:
             model: GenerativeModel | None = (
-                db.query(GenerativeModel).filter_by(name=params.model_name).one()
+                db.query(GenerativeModel)
+                .filter_by(name=params.model_name)
+                .one_or_none()
             )
             if not model:
                 model = GenerativeModel(
