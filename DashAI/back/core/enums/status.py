@@ -23,8 +23,8 @@ class ExplorerStatus(Enum):
     STARTED = 2
     FINISHED = 3
     ERROR = 4
-    
-    
+
+
 class ConverterListStatus(Enum):
     NOT_STARTED = 0
     DELIVERED = 1

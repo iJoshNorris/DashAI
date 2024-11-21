@@ -241,7 +241,7 @@ class ConverterList(Base):
         """Update the status of the list to error."""
         self.status = ConverterListStatus.ERROR
 
-        
+
 class Exploration(Base):
     __tablename__ = "exploration"
     """
