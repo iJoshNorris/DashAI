@@ -6,7 +6,11 @@ from sqlalchemy import JSON, DateTime, Enum, ForeignKey, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from DashAI.back.core.enums.status import ConverterListStatus, ExplainerStatus, RunStatus
+from DashAI.back.core.enums.status import (
+    ConverterListStatus,
+    ExplainerStatus,
+    RunStatus,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -204,7 +208,9 @@ class ConverterList(Base):
     converters: Mapped[JSON] = mapped_column(JSON)
     created: Mapped[DateTime] = mapped_column(DateTime, default=datetime.now)
     status: Mapped[Enum] = mapped_column(
-        Enum(ConverterListStatus), nullable=False, default=ConverterListStatus.NOT_STARTED
+        Enum(ConverterListStatus),
+        nullable=False,
+        default=ConverterListStatus.NOT_STARTED,
     )
 
     def set_status_as_delivered(self) -> None:

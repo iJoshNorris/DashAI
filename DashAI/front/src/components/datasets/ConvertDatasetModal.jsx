@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import { Settings, Help } from "@mui/icons-material";
@@ -13,6 +13,7 @@ import {
   Typography,
   IconButton,
   TextField,
+  CircularProgress,
 } from "@mui/material";
 import DatasetSummaryTable from "./DatasetSummaryTable";
 import ConverterSelectorModal from "./ConverterSelectorModal";
@@ -20,13 +21,20 @@ import ConverterTable from "./ConverterTable";
 import { useSnackbar } from "notistack";
 import { enqueueConverterJob as enqueueConverterJobRequest } from "../../api/job";
 import { startJobQueue as startJobQueueRequest } from "../../api/job";
-import { saveDatasetConverterList } from "../../api/converter";
+import {
+  saveDatasetConverterList,
+  getDatasetConverterList,
+} from "../../api/converter";
+import { ConverterListStatus } from "../../types/converter";
 
 function ConvertDatasetModal({ datasetId }) {
   const { enqueueSnackbar } = useSnackbar();
   const [open, setOpen] = useState(false);
   const [targetColumnIndex, setTargetColumnIndex] = useState(null);
   const [convertersToApply, setConvertersToApply] = useState([]);
+  const [converterListId, setConverterListId] = useState(null);
+  const [converterListStatus, setConverterListStatus] = useState(null);
+  const [running, setRunning] = useState(false);
 
   const handleCloseContent = () => {
     setOpen(false);
@@ -67,6 +75,7 @@ function ConvertDatasetModal({ datasetId }) {
 
   const handleSaveConfig = async () => {
     try {
+      // Save the list of converters to apply
       const response = await saveDatasetConverterList(
         datasetId,
         convertersToApply.reduce((acc, { name, params, scope, pipelineId }) => {
@@ -79,19 +88,21 @@ function ConvertDatasetModal({ datasetId }) {
         }, {}),
       );
       const converterListId = response.id;
+      setConverterListId(converterListId);
+
+      // Enqueue the converter job using the id of the saved list
       await enqueueConverterJob(converterListId);
       enqueueSnackbar("Converter job successfully created.", {
         variant: "success",
       });
-      await startJobQueue();
+      await startJobQueue().then(() => {
+        setRunning(true);
+      });
       enqueueSnackbar("Running converter jobs.", {
         variant: "success",
       });
-
-      setConvertersToApply([]);
-      setTargetColumnIndex(null);
-      setOpen(false);
     } catch (error) {
+      setRunning(false);
       enqueueSnackbar("Error while trying to modify the dataset");
       if (error.response) {
         console.error("Response error:", error.message);
@@ -100,8 +111,47 @@ function ConvertDatasetModal({ datasetId }) {
       } else {
         console.error("Unknown Error", error.message);
       }
+    } finally {
+      setConvertersToApply([]);
+      setTargetColumnIndex(null);
     }
   };
+
+  const getConverterListStatus = async () => {
+    getDatasetConverterList(converterListId)
+      .then((convertersFromDB) => {
+        console.log(convertersFromDB);
+        setConverterListStatus(convertersFromDB.status);
+      })
+      .catch((error) => {
+        console.log(error);
+        enqueueSnackbar("Error while trying to fetch converters", {
+          variant: "error",
+        });
+      });
+  };
+
+  // update state of the job
+  useEffect(() => {
+    let running = converterListStatus === ConverterListStatus.RUNNING;
+    let finished = converterListStatus === ConverterListStatus.FINISHED;
+    setRunning(running);
+    if (finished) {
+      enqueueSnackbar("Dataset successfully modified.", {
+        variant: "success",
+      });
+    }
+  }, [converterListStatus]);
+
+  // polling to update the state of the run
+  useEffect(() => {
+    if (running) {
+      const interval = setInterval(() => {
+        getConverterListStatus();
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [running]);
 
   return (
     <React.Fragment>
@@ -126,74 +176,80 @@ function ConvertDatasetModal({ datasetId }) {
       >
         <DialogTitle>Modify dataset</DialogTitle>
         <DialogContent dividers>
-          <Grid
-            container
-            direction="row"
-            justifyContent="space-around"
-            alignItems="stretch"
-            rowGap={2}
-            onClick={(event) => event.stopPropagation()}
-          >
-            {/* Dataset summary table */}
-            <Grid item xs={12}>
-              <Typography variant="subtitle1" component="h3" mb={1}>
-                Dataset summary
-              </Typography>
-            </Grid>
-            <DatasetSummaryTable datasetId={datasetId} />
-
-            {/* Converter selector */}
-            <Grid item xs={12} display={"flex"} alignItems={"center"} gap={2}>
-              <Grid item xs={6} display={"flex"} alignItems={"center"}>
+          {running ? (
+            <CircularProgress color="inherit" />
+          ) : (
+            <Grid
+              container
+              direction="row"
+              justifyContent="space-around"
+              alignItems="stretch"
+              rowGap={2}
+              onClick={(event) => event.stopPropagation()}
+            >
+              {/* Dataset summary table */}
+              <Grid item xs={12}>
                 <Typography variant="subtitle1" component="h3" mb={1}>
-                  List of converters
+                  Dataset summary
                 </Typography>
-                <Tooltip
-                  title={`Converters are for modifying the data in a supervised or unsupervised way
+              </Grid>
+              <DatasetSummaryTable datasetId={datasetId} />
+
+              {/* Converter selector */}
+              <Grid item xs={12} display={"flex"} alignItems={"center"} gap={2}>
+                <Grid item xs={6} display={"flex"} alignItems={"center"}>
+                  <Typography variant="subtitle1" component="h3" mb={1}>
+                    List of converters
+                  </Typography>
+                  <Tooltip
+                    title={`Converters are for modifying the data in a supervised or unsupervised way
     (e.g. by adding, changing, or removing columns, but not by adding or removing rows). The list will be applied following the defined order.`}
-                  placement="top"
-                >
-                  <IconButton>
-                    <Help />
-                  </IconButton>
-                </Tooltip>
-                <ConverterSelectorModal
-                  setConvertersToApply={setConvertersToApply}
-                />
+                    placement="top"
+                  >
+                    <IconButton>
+                      <Help />
+                    </IconButton>
+                  </Tooltip>
+                  <ConverterSelectorModal
+                    setConvertersToApply={setConvertersToApply}
+                  />
+                </Grid>
+                <Grid item xs={6} display={"flex"} alignItems={"center"}>
+                  <Typography variant="subtitle2" component="h3" mb={1}>
+                    Target column index
+                  </Typography>
+                  <Tooltip
+                    title={`Supervised converters will include this column in their learning process.`}
+                    placement="top"
+                  >
+                    <IconButton>
+                      <Help />
+                    </IconButton>
+                  </Tooltip>
+                  <TextField
+                    id="target-column-index"
+                    label="Index"
+                    value={targetColumnIndex}
+                    placeholder="1"
+                    autoComplete="off"
+                    onChange={(event) =>
+                      setTargetColumnIndex(event.target.value)
+                    }
+                    variant="outlined"
+                    size="small"
+                    required
+                    type="number"
+                  />
+                </Grid>
               </Grid>
-              <Grid item xs={6} display={"flex"} alignItems={"center"}>
-                <Typography variant="subtitle2" component="h3" mb={1}>
-                  Target column index
-                </Typography>
-                <Tooltip
-                  title={`Supervised converters will include this column in their learning process.`}
-                  placement="top"
-                >
-                  <IconButton>
-                    <Help />
-                  </IconButton>
-                </Tooltip>
-                <TextField
-                  id="target-column-index"
-                  label="Index"
-                  value={targetColumnIndex}
-                  placeholder="1"
-                  autoComplete="off"
-                  onChange={(event) => setTargetColumnIndex(event.target.value)}
-                  variant="outlined"
-                  size="small"
-                  required
-                  type="number"
-                />
-              </Grid>
+              {/* Selected converters table */}
+              <ConverterTable
+                datasetId={datasetId}
+                convertersToApply={convertersToApply}
+                setConvertersToApply={setConvertersToApply}
+              />
             </Grid>
-            {/* Selected converters table */}
-            <ConverterTable
-              datasetId={datasetId}
-              convertersToApply={convertersToApply}
-              setConvertersToApply={setConvertersToApply}
-            />
-          </Grid>
+          )}
         </DialogContent>
         {/* Actions - Close and Modify */}
         <DialogActions>
@@ -204,7 +260,9 @@ function ConvertDatasetModal({ datasetId }) {
             variant="contained"
             color="primary"
             disabled={
-              convertersToApply.length === 0 || targetColumnIndex === null
+              convertersToApply.length === 0 ||
+              targetColumnIndex === null ||
+              running
             }
           >
             Modify

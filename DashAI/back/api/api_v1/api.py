@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 
 from DashAI.back.api.api_v1.endpoints import (
-    converters,
     components,
+    converters,
     datasets,
     experiments,
     explainers,

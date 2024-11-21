@@ -84,3 +84,48 @@ async def post_dataset_converter_list(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Internal database error",
             ) from e
+
+
+@router.get("/{converter_list_id}")
+@inject
+async def get_dataset_converter_list(
+    converter_list_id: int,
+    session_factory: sessionmaker = Depends(lambda: di["session_factory"]),
+):
+    """Get a converter list from the database.
+
+    Parameters
+    ----------
+    converter_list_id : int
+        ID of the converter list.
+    session_factory : Callable[..., ContextManager[Session]]
+        A factory that creates a context manager that handles a SQLAlchemy session.
+        The generated session can be used to access and query the database.
+
+    Returns
+    -------
+    ConverterList
+        The converter list.
+
+    Raises
+    ------
+    HTTPException
+        If the converter list is not found or if there is an internal database error.
+    """
+    with session_factory() as db:
+        try:
+            converter_list = db.get(ConverterList, converter_list_id)
+            if not converter_list:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Converter list not found",
+                )
+
+            return converter_list
+
+        except exc.SQLAlchemyError as e:
+            logger.exception(e)
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Internal database error",
+            ) from e

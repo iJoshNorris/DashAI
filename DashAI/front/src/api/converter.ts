@@ -15,3 +15,10 @@ export const saveDatasetConverterList = async (
   const response = await api.post<IConverter>(`${converterEndpoint}`, data);
   return response.data;
 };
+
+export const getDatasetConverterList = async (
+  datasetId: number,
+): Promise<IConverter> => {
+  const response = await api.get<IConverter>(`${converterEndpoint}/${datasetId}`);
+  return response.data;
+}
