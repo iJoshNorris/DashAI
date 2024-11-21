@@ -43,13 +43,17 @@ async def upload_generative_session(
 
     with session_factory() as db:
         try:
-            model = GenerativeModel(
-                name=params.model_name,
-                task_name=params.task_name,
+            model: GenerativeModel | None = (
+                db.query(GenerativeModel).filter_by(name=params.model_name).one()
             )
-            db.add(model)
-            db.commit()
-            db.refresh(model)
+            if not model:
+                model = GenerativeModel(
+                    name=params.model_name,
+                    task_name=params.task_name,
+                )
+                db.add(model)
+                db.commit()
+                db.refresh(model)
             model_id = model.id
 
         except Exception:
