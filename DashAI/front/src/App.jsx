@@ -10,6 +10,8 @@ import ExplainersDashboard from "./components/explainers/ExplainersDashboard";
 import ExplainersPage from "./pages/ExplainersPage";
 import ExplainerData from "./components/explainers/ExplainerData";
 import ResponsiveAppBar from "./components/ResponsiveAppBar";
+import PluginsPage from "./pages/plugins/Plugins";
+import PluginsDetails from "./pages/plugins/components/PluginsDetails";
 
 function App() {
   return (
@@ -27,6 +29,13 @@ function App() {
             path="explainer/:scope/:runId/:id"
             element={<ExplainerData />}
           />
+        </Route>
+        <Route path="/app/plugins">
+          <Route index element={<PluginsPage />} />
+          <Route path=":category">
+            <Route index element={<PluginsPage />} />
+            <Route path="details/:id" element={<PluginsDetails />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>
